@@ -2,24 +2,24 @@
 
 Alpha installer CLI for MiMo Voice.
 
-这个 CLI 用来安装、配置和验证以下组件：
-- MiMo Voice Python service
-- MiMo Voice OpenClaw plugin
-- OpenClaw 中与该插件相关的常见配置
+This CLI installs, configures, and verifies:
+- the MiMo Voice Python service
+- the MiMo Voice OpenClaw plugin
+- the common OpenClaw settings needed to connect them
 
-当前版本：
+Current version:
 - `0.1.0-alpha.1`
 
-## 适用环境
+## Requirements
 
-- Linux 或 WSL
+- Linux or WSL
 - `python3`
 - `ffmpeg`
 - `openclaw`
 
-如果你在 WSL 中运行，请不要依赖 bare `python`，优先使用 `python3`。
+If you use WSL, prefer `python3` instead of bare `python`.
 
-## 命令
+## Commands
 
 ```bash
 mimo-voice-openclaw doctor
@@ -29,93 +29,92 @@ mimo-voice-openclaw uninstall
 mimo-voice-openclaw upgrade
 ```
 
-## 推荐安装流程
+## Recommended flow
 
-### 1. 检查依赖
+### 1. Check prerequisites
 
 ```bash
 mimo-voice-openclaw doctor
 ```
 
-### 2. 安装 / 刷新
+### 2. Install or refresh
 
 ```bash
 mimo-voice-openclaw install
 ```
 
-### 3. 写入插件配置
+### 3. Configure the plugin
 
 ```bash
 mimo-voice-openclaw configure \
   --service-base-url http://127.0.0.1:8091 \
-  --service-dir /path/to/projects/mimo-voice/service
+  --service-dir /path/to/service
 ```
 
-如果你只想预览变更：
+Preview configuration changes:
 
 ```bash
 mimo-voice-openclaw configure --dry-run
 ```
 
-如果你要清掉默认 Telegram chat id：
+Clear the default Telegram chat id:
 
 ```bash
 mimo-voice-openclaw configure --clear-default-chat-id
 ```
 
-### 4. 验证
+### 4. Verify
 
 ```bash
 openclaw plugins info mimo-voice-openclaw
 openclaw mimo-voice status
 ```
 
-如果安装后命令没有立即生效，建议先重启 gateway 再验证。
+If commands do not appear immediately after installation, restart the gateway and try again.
 
-## 命令说明
+## What each command does
 
 ### `doctor`
-检查：
+Checks:
 - `python3`
 - `ffmpeg`
 - `openclaw`
-- service 路径
-- plugin 路径
-- health 状态
+- service paths
+- plugin paths
+- service health
 
 ### `install`
-执行：
-- service 资源准备
-- venv 检查/创建
-- Python 依赖安装
-- plugin 部署
-- service 健康检查
+Performs:
+- service asset preparation
+- venv check or creation
+- Python dependency installation
+- plugin deployment
+- service health verification
 
 ### `configure`
-执行：
-- 写入 `plugins.entries.mimo-voice-openclaw`
-- 支持 dry-run
-- 写入前创建备份
+Writes the plugin config into OpenClaw.
+It supports:
+- backup before write
+- `--dry-run`
+- `--clear-default-chat-id`
 
 ### `uninstall`
-执行：
-- 清理 plugin 配置与安装记录
-- 删除全局插件目录
+Removes:
+- plugin config
+- install record
+- global plugin directory
 
-默认不会删除 service 目录和 venv。
+It does not remove the Python service directory or virtual environment by default.
 
 ### `upgrade`
-当前会走 refresh 流程，相当于重新执行一次 install。
+Currently refreshes the installation by running the install flow again.
 
-## 限制说明
+## Notes for alpha users
 
-这是 alpha 版本，请按 alpha 方式使用：
+- Verify the package in your own environment
+- Restart the gateway after installation when needed
+- `upgrade` is not a differential updater
+- Some environments may use a local extension-directory deployment path during installation
 
-- 建议先在自己的环境验证
-- 安装后建议做一次 gateway 重启
-- `upgrade` 不是差异升级
-- `uninstall` 默认偏保守
-- 某些环境下 plugin 安装可能会回退到本地扩展目录部署
-
-更完整的 alpha 说明见：
-- `projects/mimo-voice/ALPHA_NOTES.md`
+See also:
+- `../ALPHA_NOTES.md`

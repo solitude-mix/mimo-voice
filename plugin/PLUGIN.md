@@ -24,7 +24,7 @@
 
 ## 使用建议
 
-- 在 OpenClaw 内部自动化里，优先用 Gateway 方法或工具调用
+- 在 OpenClaw 自动化场景里，优先用 Gateway 方法或工具调用
 - 在命令行里，优先用 `openclaw mimo-voice ...`
 - 如果要排查底层问题，回到 `projects/mimo-voice/service/`
 

@@ -1,26 +1,23 @@
 # MiMo Voice Alpha Notes
 
-当前推荐版本：
+Recommended version:
 - `mimo-voice-openclaw-cli@0.1.0-alpha.1`
 
-这份说明面向准备试用 alpha 版本的用户。
+This file is for people who want to try the current alpha release.
 
-## 这个 alpha 版本包含什么
+## What works in this alpha
 
-当前 alpha 版本已经覆盖：
+The current alpha covers:
+- `doctor`
+- `install`
+- `configure`
+- `uninstall`
+- `upgrade`
+- OpenClaw plugin deployment
+- TTS
+- Telegram voice sending
 
-- `doctor` 依赖检查
-- `install` 安装与刷新
-- `configure` 常用插件配置写入
-- `uninstall` 基本卸载
-- `upgrade` refresh 风格升级
-- OpenClaw plugin 部署
-- TTS 主链路
-- Telegram voice 主链路
-
-## 推荐使用方式
-
-建议按下面的顺序使用：
+## Recommended flow
 
 ```bash
 mimo-voice-openclaw doctor
@@ -28,47 +25,31 @@ mimo-voice-openclaw install
 mimo-voice-openclaw configure
 ```
 
-然后验证：
+Then verify:
 
 ```bash
 openclaw plugins info mimo-voice-openclaw
 openclaw mimo-voice status
 ```
 
-如果安装或启用插件后命令没有立即生效，建议先重启 gateway 再验证。
+If commands do not appear immediately after installation, restart the gateway and verify again.
 
-## 这个 alpha 版本适合谁
+## Known limitations
 
-适合：
-- 想提前试用 MiMo Voice 安装流程的人
-- 想把 MiMo TTS 与 Telegram voice 接入 OpenClaw 的用户
-- 能接受 alpha 版本行为仍在继续优化中的使用者
+- `upgrade` currently behaves like a refresh install
+- `uninstall` keeps the Python service directory and virtual environment by default
+- `configure` rewrites JSON formatting
+- Some environments may use a local extension-directory deployment path during plugin installation
 
-不适合：
-- 需要完全稳定、完全无手动确认流程的生产环境
-- 需要复杂升级/回滚策略的正式运维场景
+## WSL note
 
-## 已知限制
+If you use WSL:
+- use `python3`
+- do not rely on bare `python`
 
-当前 alpha 版本仍有这些限制：
+## What to include in bug reports
 
-- `upgrade` 目前是 refresh 风格，不是差异升级器
-- `uninstall` 默认不会删除 Python service 目录和 venv
-- `configure` 会重写 JSON 格式，不保留原注释
-- 某些环境下 plugin 安装可能回退到本地扩展目录部署
-
-## WSL 说明
-
-如果你在 Windows 的 WSL 中使用：
-
-- 请优先使用 `python3`
-- 不要依赖 bare `python`
-
-## 反馈建议
-
-如果你在 alpha 版本中遇到问题，建议反馈这些信息：
-
-- 操作系统 / 是否 WSL
-- `mimo-voice-openclaw doctor` 输出
-- `openclaw plugins info mimo-voice-openclaw` 输出
-- 是否执行过 gateway 重启
+If something fails, these outputs are useful:
+- `mimo-voice-openclaw doctor`
+- `openclaw plugins info mimo-voice-openclaw`
+- whether you restarted the gateway
