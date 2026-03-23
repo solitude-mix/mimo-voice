@@ -21,7 +21,22 @@ Current version:
 
 If you use WSL, prefer `python3` instead of bare `python`.
 
-## Commands
+## Easiest way to start
+
+If you have not installed the CLI globally, use:
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+```
+
+## Optional: install globally first
+
+```bash
+npm install -g mimo-voice-openclaw-cli
+```
+
+After that you can run:
 
 ```bash
 mimo-voice-openclaw doctor
@@ -36,19 +51,19 @@ mimo-voice-openclaw upgrade
 ### 1. Check prerequisites
 
 ```bash
-mimo-voice-openclaw doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
 ```
 
 ### 2. Install or refresh
 
 ```bash
-mimo-voice-openclaw install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
 ```
 
 ### 3. Configure the plugin
 
 ```bash
-mimo-voice-openclaw configure \
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure \
   --service-base-url http://127.0.0.1:8091 \
   --service-dir /path/to/service
 ```
@@ -56,13 +71,13 @@ mimo-voice-openclaw configure \
 Preview configuration changes:
 
 ```bash
-mimo-voice-openclaw configure --dry-run
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure --dry-run
 ```
 
 Clear the default Telegram chat id:
 
 ```bash
-mimo-voice-openclaw configure --clear-default-chat-id
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure --clear-default-chat-id
 ```
 
 ### 4. Verify

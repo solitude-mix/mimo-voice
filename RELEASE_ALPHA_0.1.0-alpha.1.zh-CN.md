@@ -1,5 +1,7 @@
 # 0.1.0-alpha.1 发布步骤
 
+[中文说明](./RELEASE_ALPHA_0.1.0-alpha.1.zh-CN.md) | [English](./RELEASE_ALPHA_0.1.0-alpha.1.md)
+
 这份文档用于发布 `mimo-voice-openclaw-cli@0.1.0-alpha.1`。
 
 ## 发布前检查
@@ -40,31 +42,6 @@ node src/index.js configure --dry-run
 openclaw plugins info mimo-voice-openclaw
 openclaw mimo-voice status
 ```
-
-## 发布方式
-
-### 方式 1：本地手动发布
-
-```bash
-cd cli
-npm publish --tag alpha
-```
-
-### 方式 2：GitHub Actions 自动发布
-
-仓库中已提供：
-- `.github/workflows/npm-alpha.yml`
-
-触发方式：
-
-```bash
-git tag v0.1.0-alpha.1
-git push origin v0.1.0-alpha.1
-```
-
-前提：
-- GitHub 仓库已创建
-- GitHub Actions secret `NPM_TOKEN` 已配置
 
 ## 发布后验证
 

@@ -4,7 +4,20 @@
 
 `cli/` is the MiMo Voice install and maintenance CLI.
 
-Available commands:
+If you have not installed the CLI globally, start with:
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+```
+
+Only after running:
+
+```bash
+npm install -g mimo-voice-openclaw-cli
+```
+
+can you use these commands directly:
 
 ```bash
 mimo-voice-openclaw doctor
@@ -28,9 +41,9 @@ mimo-voice-openclaw upgrade
 ## Recommended order
 
 ```bash
-mimo-voice-openclaw doctor
-mimo-voice-openclaw install
-mimo-voice-openclaw configure
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure
 ```
 
 Then verify:

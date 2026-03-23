@@ -21,10 +21,12 @@ The current alpha covers:
 
 ## Recommended flow
 
+If you have not installed the CLI globally, use:
+
 ```bash
-mimo-voice-openclaw doctor
-mimo-voice-openclaw install
-mimo-voice-openclaw configure
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure
 ```
 
 Then verify:
@@ -52,6 +54,6 @@ If you use WSL:
 ## What to include in bug reports
 
 If something fails, these outputs are useful:
-- `mimo-voice-openclaw doctor`
+- `npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor`
 - `openclaw plugins info mimo-voice-openclaw`
 - whether you restarted the gateway

@@ -1,8 +1,23 @@
 # MiMo Voice CLI
 
-`cli/` 是 MiMo Voice 的安装与分发命令行工具。
+[中文说明](./CLI.zh-CN.md) | [English](./CLI.md)
 
-当前命令：
+`cli/` 是 MiMo Voice 的安装与维护命令行工具。
+
+如果你没有全局安装这个 CLI，请优先使用：
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+```
+
+只有在执行过：
+
+```bash
+npm install -g mimo-voice-openclaw-cli
+```
+
+之后，才可以直接使用下面这些命令：
 
 ```bash
 mimo-voice-openclaw doctor
@@ -26,9 +41,9 @@ mimo-voice-openclaw upgrade
 ## 建议顺序
 
 ```bash
-mimo-voice-openclaw doctor
-mimo-voice-openclaw install
-mimo-voice-openclaw configure
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure
 ```
 
 然后验证：

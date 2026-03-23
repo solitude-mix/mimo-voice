@@ -1,5 +1,7 @@
 # MiMo Voice Alpha 版本说明
 
+[中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
+
 当前推荐版本：
 - `mimo-voice-openclaw-cli@0.1.0-alpha.1`
 
@@ -19,10 +21,12 @@
 
 ## 推荐流程
 
+如果你还没有全局安装 CLI，直接使用：
+
 ```bash
-mimo-voice-openclaw doctor
-mimo-voice-openclaw install
-mimo-voice-openclaw configure
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure
 ```
 
 然后验证：
@@ -50,6 +54,6 @@ openclaw mimo-voice status
 ## 反馈问题时建议附带
 
 如果你遇到问题，建议附上这些输出：
-- `mimo-voice-openclaw doctor`
+- `npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor`
 - `openclaw plugins info mimo-voice-openclaw`
 - 是否执行过 gateway 重启
