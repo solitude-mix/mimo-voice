@@ -1,5 +1,7 @@
 # MiMo Voice Alpha Notes
 
+[中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
+
 Recommended version:
 - `mimo-voice-openclaw-cli@0.1.0-alpha.1`
 

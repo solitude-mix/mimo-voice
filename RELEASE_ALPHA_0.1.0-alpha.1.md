@@ -1,5 +1,7 @@
 # Release Steps for 0.1.0-alpha.1
 
+[中文说明](./RELEASE_ALPHA_0.1.0-alpha.1.zh-CN.md) | [English](./RELEASE_ALPHA_0.1.0-alpha.1.md)
+
 This document is for releasing `mimo-voice-openclaw-cli@0.1.0-alpha.1`.
 
 ## Before release

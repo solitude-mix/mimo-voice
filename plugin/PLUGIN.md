@@ -1,49 +1,47 @@
 # MiMo Voice OpenClaw Plugin
 
-`projects/mimo-voice/plugin/` 是 MiMo Voice 的 OpenClaw 插件部分。
+[中文说明](./PLUGIN.zh-CN.md) | [English](./PLUGIN.md)
 
-它负责把 OpenClaw 的调用接到本地语音服务。
+`plugin/` is the MiMo Voice OpenClaw plugin component.
 
-## 提供的能力
+It connects OpenClaw commands and tool calls to the local voice service.
 
-### Gateway 方法
+## Available features
 
+### Gateway methods
 - `mimoVoice.status`
 - `mimoVoice.tts`
 - `mimoVoice.sendTelegramVoice`
 
-### CLI 命令
-
+### CLI commands
 - `openclaw mimo-voice status`
 - `openclaw mimo-voice tts <text>`
 - `openclaw mimo-voice send-telegram-voice <text> --chat-id <id>`
 
 ### Agent tool
-
 - `mimo_voice`
 
-## 使用建议
+## Recommended usage
 
-- 在 OpenClaw 自动化场景里，优先用 Gateway 方法或工具调用
-- 在命令行里，优先用 `openclaw mimo-voice ...`
-- 如果要排查底层问题，回到 `projects/mimo-voice/service/`
+- In OpenClaw automation flows, prefer Gateway methods or tool calls
+- In a shell, prefer `openclaw mimo-voice ...`
+- For low-level troubleshooting, go back to `service/`
 
-## 插件配置
+## Plugin configuration
 
-常见配置项：
-
+Common config fields:
 - `serviceBaseUrl`
 - `serviceDir`
 - `defaultChatId`
 - `preferCli`
 
-推荐通过安装 CLI 的 `configure` 命令写入配置，而不是手动修改。
+Use the installer CLI `configure` command instead of editing the config manually when possible.
 
-## 验证
+## Verify
 
 ```bash
 openclaw plugins info mimo-voice-openclaw
 openclaw mimo-voice status
 ```
 
-如果安装后命令没有立即出现，建议先重启 gateway 再验证。 
+If commands do not appear immediately after installation, restart the gateway and try again.

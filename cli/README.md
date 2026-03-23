@@ -1,5 +1,7 @@
 # mimo-voice-openclaw-cli
 
+[中文说明](./README.zh-CN.md) | [English](./README.md)
+
 Alpha installer CLI for MiMo Voice.
 
 This CLI installs, configures, and verifies:

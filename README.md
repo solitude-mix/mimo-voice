@@ -1,5 +1,7 @@
 # MiMo Voice
 
+[中文说明](./README.zh-CN.md) | [English](./README.md)
+
 MiMo Voice is a voice project that brings together MiMo TTS, Telegram voice sending, and OpenClaw integration.
 
 If you want to install and use it, start here:

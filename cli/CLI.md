@@ -1,8 +1,10 @@
 # MiMo Voice CLI
 
-`projects/mimo-voice/cli/` 是 MiMo Voice 的安装与分发命令行工具。
+[中文说明](./CLI.zh-CN.md) | [English](./CLI.md)
 
-当前命令：
+`cli/` is the MiMo Voice install and maintenance CLI.
+
+Available commands:
 
 ```bash
 mimo-voice-openclaw doctor
@@ -12,18 +14,18 @@ mimo-voice-openclaw uninstall
 mimo-voice-openclaw upgrade
 ```
 
-## 适合什么场景
+## Typical use cases
 
-- 检查本地依赖是否齐全
-- 安装或刷新 MiMo Voice service 与 OpenClaw plugin
-- 写入常用 OpenClaw 插件配置
-- 卸载或重新部署 alpha 版本
+- check local prerequisites
+- install or refresh the MiMo Voice service and OpenClaw plugin
+- write common plugin settings
+- uninstall or redeploy the alpha version
 
-## 当前版本
+## Current version
 
 - `0.1.0-alpha.1`
 
-## 建议使用顺序
+## Recommended order
 
 ```bash
 mimo-voice-openclaw doctor
@@ -31,16 +33,16 @@ mimo-voice-openclaw install
 mimo-voice-openclaw configure
 ```
 
-然后验证：
+Then verify:
 
 ```bash
 openclaw plugins info mimo-voice-openclaw
 openclaw mimo-voice status
 ```
 
-## 注意
+## Notes
 
-- 在 WSL 环境中请使用 `python3`
-- 安装或启用插件后，建议做一次 gateway 重启
-- `upgrade` 当前是 refresh 风格，不是差异升级器
-- `uninstall` 默认保留 Python service 目录和 venv，以避免误删用户数据
+- In WSL, use `python3`
+- Restart the gateway after installation when needed
+- `upgrade` currently behaves like a refresh install
+- `uninstall` keeps the Python service directory and venv by default to avoid accidental data loss

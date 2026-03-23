@@ -1,106 +1,76 @@
 # MiMo Voice Service
 
-`projects/mimo-voice/service/` 是 MiMo Voice 的 Python 服务部分。
+[中文说明](./SERVICE.zh-CN.md) | [English](./SERVICE.md)
 
-它负责：
-- MiMo TTS 调用
-- 音频处理与转码
-- Telegram voice 发送
+`service/` is the MiMo Voice Python service component.
+
+It provides:
+- MiMo TTS
+- audio conversion
+- Telegram voice sending
 - HTTP API
-- 本地 CLI
+- local CLI
 
-## 依赖
+## Requirements
 
 - Python 3.10+
 - `python3`
 - `ffmpeg`
 - `MIMO_API_KEY`
-- `TELEGRAM_BOT_TOKEN`（仅 Telegram 发送接口需要）
+- `TELEGRAM_BOT_TOKEN` (only needed for Telegram voice sending)
 
-如果你在 WSL 中运行，请优先使用 `python3`，不要依赖 bare `python`。
+If you use WSL, prefer `python3` instead of bare `python`.
 
-## 启动
+## Start
 
 ```bash
-cd projects/mimo-voice/service
+cd service
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -r requirements.txt
 bash scripts/start.sh
 ```
 
-默认地址：
-
+Default address:
 - `http://127.0.0.1:8091`
 
-后台启动：
+## API examples
 
-```bash
-bash scripts/start-bg.sh
-bash scripts/status.sh
-```
-
-停止后台服务：
-
-```bash
-bash scripts/stop-bg.sh
-```
-
-## API
-
-### 健康检查
+### Health check
 
 ```bash
 curl http://127.0.0.1:8091/health
 ```
 
-### 输出 WAV
+### Output WAV
 
 ```bash
 curl -X POST http://127.0.0.1:8091/tts/raw \
   -H 'Content-Type: application/json' \
   -d '{
-    "text": "你好，我是小音。",
+    "text": "Hello from MiMo Voice.",
     "voice": "default_zh"
   }' \
   --output /tmp/mimo.wav
 ```
 
-### 发送 Telegram voice
+### Send Telegram voice
 
 ```bash
 curl -X POST http://127.0.0.1:8091/telegram/send-voice \
   -H 'Content-Type: application/json' \
   -d '{
-    "text": "你好，我是小音。",
+    "text": "Hello from MiMo Voice.",
     "chat_id": "<your-chat-id>",
     "voice": "default_zh",
-    "style": "开心"
+    "style": "happy"
   }'
 ```
 
-## CLI
-
-### 检查服务
+## CLI examples
 
 ```bash
 bash scripts/cli.sh health
+bash scripts/cli.sh tts "Hello from MiMo Voice." --save-file
+bash scripts/cli.sh send-telegram-voice "Hello from MiMo Voice." --chat-id <your-chat-id>
 ```
-
-### 生成音频
-
-```bash
-bash scripts/cli.sh tts "你好，我是小音。" --save-file
-```
-
-### 发送 Telegram voice
-
-```bash
-bash scripts/cli.sh send-telegram-voice "你好，我是小音。" --chat-id <your-chat-id>
-```
-
-## 说明
-
-- 长文本会自动分段
-- CLI 输出为 JSON，方便脚本继续处理
-- 旧入口 `tools/tg-voice` 仍可作为兼容入口使用
