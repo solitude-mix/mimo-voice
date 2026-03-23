@@ -1,0 +1,35 @@
+name: npm alpha publish
+
+on:
+  push:
+    tags:
+      - 'v*-alpha.*'
+  workflow_dispatch:
+
+jobs:
+  publish-alpha:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cli
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Show package version
+        run: node -p "require('./package.json').version"
+
+      - name: Pack dry-run
+        run: npm pack --dry-run
+
+      - name: Publish alpha
+        run: npm publish --tag alpha
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

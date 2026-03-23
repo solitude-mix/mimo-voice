@@ -1,0 +1,34 @@
+{
+  "name": "mimo-voice-openclaw-cli",
+  "version": "0.1.0-alpha.1",
+  "description": "Alpha installer CLI for the unified MiMo Voice project.",
+  "bin": {
+    "mimo-voice-openclaw": "./src/index.js"
+  },
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "src",
+    "assets",
+    "README.md",
+    "CLI.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "openclaw",
+    "mimo",
+    "telegram",
+    "tts",
+    "installer",
+    "alpha"
+  ],
+  "scripts": {
+    "start": "node ./src/index.js",
+    "doctor:local": "node ./src/index.js doctor",
+    "install:local": "node ./src/index.js install",
+    "configure:local": "node ./src/index.js configure",
+    "uninstall:local": "node ./src/index.js uninstall",
+    "upgrade:local": "node ./src/index.js upgrade"
+  }
+}

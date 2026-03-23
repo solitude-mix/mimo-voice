@@ -1,0 +1,24 @@
+{
+  "id": "mimo-voice-openclaw",
+  "name": "MiMo Voice OpenClaw Integration",
+  "description": "Thin OpenClaw integration layer for the local MiMo voice service.",
+  "version": "0.1.0",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": { "type": "boolean", "default": true },
+      "serviceBaseUrl": { "type": "string", "default": "http://127.0.0.1:8091" },
+      "serviceDir": { "type": "string" },
+      "defaultChatId": { "type": "string" },
+      "preferCli": { "type": "boolean", "default": false }
+    }
+  },
+  "uiHints": {
+    "enabled": { "label": "Enable MiMo integration" },
+    "serviceBaseUrl": { "label": "Service Base URL", "placeholder": "http://127.0.0.1:8091" },
+    "serviceDir": { "label": "Service Directory", "placeholder": "/path/to/projects/mimo-voice/service" },
+    "defaultChatId": { "label": "Default Telegram Chat ID" },
+    "preferCli": { "label": "Prefer local CLI over HTTP" }
+  }
+}

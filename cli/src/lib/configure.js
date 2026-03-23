@@ -1,0 +1,43 @@
+import { DEFAULT_SERVICE_DIR } from './paths.js';
+import { PLUGIN_ID, loadOpenClawConfig, setPluginAllow, setPluginEntryConfig, writeOpenClawConfig } from './openclaw-config.js';
+
+export const DEFAULTS = {
+  serviceBaseUrl: process.env.MIMO_VOICE_SERVICE_BASE_URL || 'http://127.0.0.1:8091',
+  serviceDir: process.env.MIMO_VOICE_SERVICE_DIR || DEFAULT_SERVICE_DIR,
+  defaultChatId: process.env.MIMO_VOICE_DEFAULT_CHAT_ID || '',
+  preferCli: false,
+};
+
+export function configureOpenClaw({
+  serviceBaseUrl = DEFAULTS.serviceBaseUrl,
+  serviceDir = DEFAULTS.serviceDir,
+  defaultChatId = DEFAULTS.defaultChatId,
+  preferCli = DEFAULTS.preferCli,
+  clearDefaultChatId = false,
+  dryRun = false,
+} = {}) {
+  const nextPluginConfig = {
+    serviceBaseUrl,
+    serviceDir,
+    ...(clearDefaultChatId ? {} : (defaultChatId ? { defaultChatId } : {})),
+    preferCli,
+  };
+
+  const loaded = loadOpenClawConfig();
+  const cfg = loaded.data;
+  setPluginEntryConfig(cfg, nextPluginConfig, { enabled: true });
+  setPluginAllow(cfg, true);
+
+  const result = writeOpenClawConfig(cfg, { dryRun });
+  return {
+    ...result,
+    config: nextPluginConfig,
+    pluginId: PLUGIN_ID,
+    notes: [
+      result.changed ? 'plugin config updated' : 'no config changes were necessary',
+      dryRun ? 'dry-run only; file not written' : 'backup created before write when changes were applied',
+      clearDefaultChatId ? 'defaultChatId cleared from plugin config' : 'defaultChatId preserved/set when provided',
+      'plugin added to plugins.allow to avoid allowlist drift',
+    ],
+  };
+}

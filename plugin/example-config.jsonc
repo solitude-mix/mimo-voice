@@ -1,0 +1,14 @@
+{
+  "plugins": {
+    "entries": {
+      "mimo-voice-openclaw": {
+        "enabled": true,
+        "config": {
+          "serviceBaseUrl": "http://127.0.0.1:8091",
+          "serviceDir": "/path/to/projects/mimo-voice/service",
+          "preferCli": false
+        }
+      }
+    }
+  }
+}

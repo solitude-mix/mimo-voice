@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+
+# Runtime / local state
+.runtime/
+*.log
+*.pid
+*.tmp
+*.bak
+
+# Generated data
+service/data/
+
+# Node
+node_modules/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Local env overrides
+.env
+.env.local
