@@ -104,6 +104,34 @@ openclaw mimo-voice status
 
 如果安装后命令没有立即出现，建议先重启 gateway 再验证。
 
+## 常见问题
+
+### 需要自己安装 ffmpeg 吗？
+需要。
+
+这个包依赖 `ffmpeg` 做音频转换。
+
+### 不全局安装也能用吗？
+可以。
+
+第一次使用直接走 `npx` 就行。
+
+### 什么时候才能直接用 `mimo-voice-openclaw ...`？
+只有在你执行过：
+
+```bash
+npm install -g mimo-voice-openclaw-cli
+```
+
+之后，才能直接使用。
+
+### 为什么第一次 `doctor` 可能会报 `service_health` 失败？
+通常是因为服务还没启动。
+先运行 `install`，再运行一次 `doctor` 即可。
+
+### 为什么建议重启 gateway？
+插件安装后，OpenClaw 有时需要重启一次，命令显示才会更稳定。
+
 ## 各命令说明
 
 ### `doctor`

@@ -1,5 +1,9 @@
 # MiMo Voice
 
+[![npm version](https://img.shields.io/npm/v/mimo-voice-openclaw-cli?color=cb3837&label=npm)](https://www.npmjs.com/package/mimo-voice-openclaw-cli)
+[![GitHub release](https://img.shields.io/github/v/release/solitude-mix/mimo-voice?display_name=tag)](https://github.com/solitude-mix/mimo-voice/releases)
+[![License](https://img.shields.io/github/license/solitude-mix/mimo-voice)](./cli/LICENSE)
+
 [中文说明](./README.zh-CN.md) | [English](./README.md)
 
 MiMo Voice 是一个语音项目，用来把 MiMo TTS、Telegram voice 发送，以及 OpenClaw 接入整合到一起。
@@ -52,6 +56,37 @@ openclaw mimo-voice status
 ```
 
 如果安装后命令没有立即出现，建议先重启 gateway 再验证。
+
+## 常见问题
+
+### 需要自己安装 ffmpeg 吗？
+需要。
+
+这个项目依赖 `ffmpeg` 做音频转换，所以请先安装，再运行 `doctor`。
+
+### 不全局安装也能用吗？
+可以。
+
+直接使用：
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+```
+
+### 什么时候才能直接用 `mimo-voice-openclaw ...`？
+只有在你全局安装 CLI 之后：
+
+```bash
+npm install -g mimo-voice-openclaw-cli
+```
+
+### 为什么第一次 `doctor` 可能会报 `service_health` 失败？
+通常是因为服务还没启动。
+先运行 `install`，再运行一次 `doctor` 就行。
+
+### 为什么建议重启 gateway？
+插件安装后，OpenClaw 有时需要重启一次，命令显示才会更稳定。
 
 ## 仓库包含什么
 

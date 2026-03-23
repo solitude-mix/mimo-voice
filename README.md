@@ -1,5 +1,9 @@
 # MiMo Voice
 
+[![npm version](https://img.shields.io/npm/v/mimo-voice-openclaw-cli?color=cb3837&label=npm)](https://www.npmjs.com/package/mimo-voice-openclaw-cli)
+[![GitHub release](https://img.shields.io/github/v/release/solitude-mix/mimo-voice?display_name=tag)](https://github.com/solitude-mix/mimo-voice/releases)
+[![License](https://img.shields.io/github/license/solitude-mix/mimo-voice)](./cli/LICENSE)
+
 [中文说明](./README.zh-CN.md) | [English](./README.md)
 
 MiMo Voice is a voice project that brings together MiMo TTS, Telegram voice sending, and OpenClaw integration.
@@ -52,6 +56,37 @@ openclaw mimo-voice status
 ```
 
 If commands do not appear immediately after installation, restart the gateway and try again.
+
+## FAQ
+
+### Do I need to install ffmpeg myself?
+Yes.
+
+This project depends on `ffmpeg` for audio conversion. Install it first, then run `doctor`.
+
+### Can I use it without global installation?
+Yes.
+
+Use:
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+```
+
+### When can I use `mimo-voice-openclaw ...` directly?
+Only after installing the CLI globally:
+
+```bash
+npm install -g mimo-voice-openclaw-cli
+```
+
+### Why does `doctor` fail on `service_health` the first time?
+Usually because the service is not running yet.
+Run `install` first, then run `doctor` again.
+
+### Why should I restart the gateway?
+After plugin installation, OpenClaw may need a restart before commands appear consistently.
 
 ## What is included
 

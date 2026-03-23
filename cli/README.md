@@ -104,6 +104,32 @@ openclaw mimo-voice status
 
 If commands do not appear immediately after installation, restart the gateway and try again.
 
+## FAQ
+
+### Do I need to install ffmpeg myself?
+Yes.
+
+This package depends on `ffmpeg` for audio conversion.
+
+### Can I use it without global installation?
+Yes.
+
+Use `npx` for the first run.
+
+### When can I use `mimo-voice-openclaw ...` directly?
+Only after running:
+
+```bash
+npm install -g mimo-voice-openclaw-cli
+```
+
+### Why can `doctor` fail on `service_health` the first time?
+Usually because the service is not running yet.
+Run `install` first, then run `doctor` again.
+
+### Why restart the gateway?
+After plugin installation, OpenClaw may need a restart before commands appear consistently.
+
 ## What each command does
 
 ### `doctor`
