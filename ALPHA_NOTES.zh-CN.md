@@ -3,7 +3,7 @@
 [中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
 
 当前推荐版本：
-- `mimo-voice-openclaw-cli@0.1.0-alpha.1`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.2`
 
 这份说明面向想试用当前 alpha 版本的用户。
 
@@ -24,9 +24,9 @@
 如果你还没有全局安装 CLI，直接使用：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure
 ```
 
 然后验证：
@@ -54,6 +54,6 @@ openclaw mimo-voice status
 ## 反馈问题时建议附带
 
 如果你遇到问题，建议附上这些输出：
-- `npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor`
+- `npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor`
 - `openclaw plugins info mimo-voice-openclaw`
 - 是否执行过 gateway 重启

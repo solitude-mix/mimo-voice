@@ -10,7 +10,7 @@ MiMo Voice 的 alpha 安装 CLI。
 - OpenClaw 中与该插件相关的常见设置
 
 当前版本：
-- `0.1.0-alpha.1`
+- `0.1.0-alpha.2`
 
 ## 环境要求
 
@@ -41,8 +41,8 @@ brew install ffmpeg
 如果你没有全局安装这个 CLI，请直接用：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 ## 如果你想先全局安装
@@ -66,19 +66,19 @@ mimo-voice-openclaw upgrade
 ### 1. 检查依赖
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 ```
 
 ### 2. 安装或刷新
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 ### 3. 写入插件配置
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure \
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure \
   --service-base-url http://127.0.0.1:8091 \
   --service-dir /path/to/service
 ```
@@ -86,13 +86,13 @@ npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure \
 如果你只想预览配置变更：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure --dry-run
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure --dry-run
 ```
 
 如果你要清掉默认 Telegram chat id：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure --clear-default-chat-id
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure --clear-default-chat-id
 ```
 
 ### 4. 验证

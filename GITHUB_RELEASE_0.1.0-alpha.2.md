@@ -1,12 +1,12 @@
-# GitHub Release Draft — v0.1.0-alpha.1
+# GitHub Release Draft — v0.1.0-alpha.2
 
 ## Title
 
-MiMo Voice v0.1.0-alpha.1
+MiMo Voice v0.1.0-alpha.2
 
 ## Release notes
 
-`mimo-voice-openclaw-cli@0.1.0-alpha.1` is now available.
+`mimo-voice-openclaw-cli@0.1.0-alpha.2` is now available.
 
 This is the first public alpha release of MiMo Voice.
 
@@ -30,8 +30,8 @@ brew install ffmpeg
 ## Quick start
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 Then verify:
@@ -53,7 +53,7 @@ openclaw mimo-voice status
 
 ## 中文说明
 
-`mimo-voice-openclaw-cli@0.1.0-alpha.1` 已发布。
+`mimo-voice-openclaw-cli@0.1.0-alpha.2` 已发布。
 
 这是 MiMo Voice 的首个公开 alpha 版本。
 
@@ -75,8 +75,8 @@ brew install ffmpeg
 ### 快速开始
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 然后验证：

@@ -7,8 +7,8 @@
 如果你没有全局安装这个 CLI，请优先使用：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 只有在执行过：
@@ -36,14 +36,14 @@ mimo-voice-openclaw upgrade
 
 ## 当前版本
 
-- `0.1.0-alpha.1`
+- `0.1.0-alpha.2`
 
 ## 建议顺序
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure
 ```
 
 然后验证：

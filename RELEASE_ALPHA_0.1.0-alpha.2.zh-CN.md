@@ -1,8 +1,8 @@
-# 0.1.0-alpha.1 发布步骤
+# 0.1.0-alpha.2 发布步骤
 
-[中文说明](./RELEASE_ALPHA_0.1.0-alpha.1.zh-CN.md) | [English](./RELEASE_ALPHA_0.1.0-alpha.1.md)
+[中文说明](./RELEASE_ALPHA_0.1.0-alpha.2.zh-CN.md) | [English](./RELEASE_ALPHA_0.1.0-alpha.2.md)
 
-这份文档用于发布 `mimo-voice-openclaw-cli@0.1.0-alpha.1`。
+这份文档用于发布 `mimo-voice-openclaw-cli@0.1.0-alpha.2`。
 
 ## 发布前检查
 
@@ -12,7 +12,7 @@
 - `cli/README.md`
 
 当前目标版本：
-- `0.1.0-alpha.1`
+- `0.1.0-alpha.2`
 
 ## 本地打包检查
 
@@ -47,5 +47,5 @@ openclaw mimo-voice status
 
 ```bash
 npm view mimo-voice-openclaw-cli versions --json
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 ```

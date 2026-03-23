@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0-alpha.1
+## 0.1.0-alpha.2
 
 First public alpha release of the MiMo Voice installer CLI.
 

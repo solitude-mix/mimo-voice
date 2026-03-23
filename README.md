@@ -17,7 +17,7 @@ If you are new, start with:
 
 Current recommended package version:
 
-- `mimo-voice-openclaw-cli@0.1.0-alpha.1`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.2`
 
 ## Quick start
 
@@ -39,13 +39,13 @@ brew install ffmpeg
 ### 2. Check your environment
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 ```
 
 ### 3. Install
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 ### 4. Verify
@@ -70,8 +70,8 @@ Yes.
 Use:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 ### When can I use `mimo-voice-openclaw ...` directly?
@@ -122,8 +122,8 @@ cli/       Installer CLI
 
 - [Alpha notes](./ALPHA_NOTES.md)
 - [发布说明（中文）](./ALPHA_NOTES.zh-CN.md)
-- [Release steps](./RELEASE_ALPHA_0.1.0-alpha.1.md)
-- [发布步骤（中文）](./RELEASE_ALPHA_0.1.0-alpha.1.zh-CN.md)
+- [Release steps](./RELEASE_ALPHA_0.1.0-alpha.2.md)
+- [发布步骤（中文）](./RELEASE_ALPHA_0.1.0-alpha.2.zh-CN.md)
 - [Service details](./service/SERVICE.md)
 - [Service 说明（中文）](./service/SERVICE.zh-CN.md)
 - [Plugin details](./plugin/PLUGIN.md)

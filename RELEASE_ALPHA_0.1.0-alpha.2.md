@@ -1,8 +1,8 @@
-# Release Steps for 0.1.0-alpha.1
+# Release Steps for 0.1.0-alpha.2
 
-[中文说明](./RELEASE_ALPHA_0.1.0-alpha.1.zh-CN.md) | [English](./RELEASE_ALPHA_0.1.0-alpha.1.md)
+[中文说明](./RELEASE_ALPHA_0.1.0-alpha.2.zh-CN.md) | [English](./RELEASE_ALPHA_0.1.0-alpha.2.md)
 
-This document is for releasing `mimo-voice-openclaw-cli@0.1.0-alpha.1`.
+This document is for releasing `mimo-voice-openclaw-cli@0.1.0-alpha.2`.
 
 ## Before release
 
@@ -12,7 +12,7 @@ Check these files:
 - `cli/README.md`
 
 Target version:
-- `0.1.0-alpha.1`
+- `0.1.0-alpha.2`
 
 ## Local package check
 
@@ -40,5 +40,5 @@ openclaw mimo-voice status
 
 ```bash
 npm view mimo-voice-openclaw-cli versions --json
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 ```

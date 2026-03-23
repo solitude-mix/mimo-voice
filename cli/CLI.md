@@ -7,8 +7,8 @@
 If you have not installed the CLI globally, start with:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 Only after running:
@@ -36,14 +36,14 @@ mimo-voice-openclaw upgrade
 
 ## Current version
 
-- `0.1.0-alpha.1`
+- `0.1.0-alpha.2`
 
 ## Recommended order
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure
 ```
 
 Then verify:

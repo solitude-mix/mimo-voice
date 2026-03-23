@@ -17,7 +17,7 @@ MiMo Voice 是一个语音项目，用来把 MiMo TTS、Telegram voice 发送，
 
 当前推荐包版本：
 
-- `mimo-voice-openclaw-cli@0.1.0-alpha.1`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.2`
 
 ## 快速开始
 
@@ -39,13 +39,13 @@ brew install ffmpeg
 ### 2. 检查环境
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 ```
 
 ### 3. 安装
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 ### 4. 验证
@@ -70,8 +70,8 @@ openclaw mimo-voice status
 直接使用：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 ### 什么时候才能直接用 `mimo-voice-openclaw ...`？
@@ -122,8 +122,8 @@ cli/       Installer CLI
 
 - [Alpha 版本说明](./ALPHA_NOTES.zh-CN.md)
 - [Alpha notes](./ALPHA_NOTES.md)
-- [发布步骤](./RELEASE_ALPHA_0.1.0-alpha.1.zh-CN.md)
-- [Release steps](./RELEASE_ALPHA_0.1.0-alpha.1.md)
+- [发布步骤](./RELEASE_ALPHA_0.1.0-alpha.2.zh-CN.md)
+- [Release steps](./RELEASE_ALPHA_0.1.0-alpha.2.md)
 - [Service 说明](./service/SERVICE.zh-CN.md)
 - [Service details](./service/SERVICE.md)
 - [Plugin 说明](./plugin/PLUGIN.zh-CN.md)

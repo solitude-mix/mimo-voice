@@ -10,7 +10,7 @@ This CLI installs, configures, and verifies:
 - the common OpenClaw settings needed to connect them
 
 Current version:
-- `0.1.0-alpha.1`
+- `0.1.0-alpha.2`
 
 ## Requirements
 
@@ -41,8 +41,8 @@ brew install ffmpeg
 If you have not installed the CLI globally, use:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 ## Optional: install globally first
@@ -66,19 +66,19 @@ mimo-voice-openclaw upgrade
 ### 1. Check prerequisites
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 ```
 
 ### 2. Install or refresh
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
 
 ### 3. Configure the plugin
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure \
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure \
   --service-base-url http://127.0.0.1:8091 \
   --service-dir /path/to/service
 ```
@@ -86,13 +86,13 @@ npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure \
 Preview configuration changes:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure --dry-run
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure --dry-run
 ```
 
 Clear the default Telegram chat id:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure --clear-default-chat-id
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure --clear-default-chat-id
 ```
 
 ### 4. Verify

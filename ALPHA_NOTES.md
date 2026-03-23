@@ -3,7 +3,7 @@
 [中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
 
 Recommended version:
-- `mimo-voice-openclaw-cli@0.1.0-alpha.1`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.2`
 
 This file is for people who want to try the current alpha release.
 
@@ -24,9 +24,9 @@ The current alpha covers:
 If you have not installed the CLI globally, use:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
-npx mimo-voice-openclaw-cli@0.1.0-alpha.1 configure
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure
 ```
 
 Then verify:
@@ -54,6 +54,6 @@ If you use WSL:
 ## What to include in bug reports
 
 If something fails, these outputs are useful:
-- `npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor`
+- `npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor`
 - `openclaw plugins info mimo-voice-openclaw`
 - whether you restarted the gateway
