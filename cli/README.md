@@ -21,6 +21,21 @@ Current version:
 
 If you use WSL, prefer `python3` instead of bare `python`.
 
+## Install ffmpeg first
+
+Ubuntu / WSL:
+
+```bash
+sudo apt update
+sudo apt install -y ffmpeg
+```
+
+macOS (Homebrew):
+
+```bash
+brew install ffmpeg
+```
+
 ## Easiest way to start
 
 If you have not installed the CLI globally, use:
@@ -134,4 +149,5 @@ Currently refreshes the installation by running the install flow again.
 - Some environments may use a local extension-directory deployment path during installation
 
 See also:
-- `../ALPHA_NOTES.md`
+- [Alpha notes](../ALPHA_NOTES.md)
+- [中文说明](./README.zh-CN.md)

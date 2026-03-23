@@ -10,17 +10,24 @@ MiMo Voice v0.1.0-alpha.1
 
 This is the first public alpha release of MiMo Voice.
 
-### What is included
+## Before you start
 
-- `doctor` for environment checks
-- `install` for service and plugin setup
-- `configure` for common OpenClaw plugin settings
-- basic `uninstall` and `upgrade`
-- OpenClaw plugin deployment
-- MiMo TTS workflow
-- Telegram voice sending workflow
+Install `ffmpeg` first.
 
-### Quick start
+Ubuntu / WSL:
+
+```bash
+sudo apt update
+sudo apt install -y ffmpeg
+```
+
+macOS (Homebrew):
+
+```bash
+brew install ffmpeg
+```
+
+## Quick start
 
 ```bash
 npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
@@ -34,16 +41,52 @@ openclaw plugins info mimo-voice-openclaw
 openclaw mimo-voice status
 ```
 
-### Notes
+## What is included
 
-This is still an alpha release.
+- `doctor` for environment checks
+- `install` for service and plugin setup
+- `configure` for common OpenClaw plugin settings
+- basic `uninstall` and `upgrade`
+- OpenClaw plugin deployment
+- MiMo TTS workflow
+- Telegram voice sending workflow
 
-Please verify it in your own environment before using it heavily.
-After installation, restart the gateway if plugin commands do not appear immediately.
+## 中文说明
 
-### Known limitations
+`mimo-voice-openclaw-cli@0.1.0-alpha.1` 已发布。
 
-- `upgrade` currently behaves like a refresh install
-- `uninstall` keeps the Python service directory and virtual environment by default
-- `configure` rewrites JSON formatting
-- Some environments may use a local extension-directory deployment path during installation
+这是 MiMo Voice 的首个公开 alpha 版本。
+
+### 开始前请先安装 ffmpeg
+
+Ubuntu / WSL：
+
+```bash
+sudo apt update
+sudo apt install -y ffmpeg
+```
+
+macOS（Homebrew）：
+
+```bash
+brew install ffmpeg
+```
+
+### 快速开始
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.1 install
+```
+
+然后验证：
+
+```bash
+openclaw plugins info mimo-voice-openclaw
+openclaw mimo-voice status
+```
+
+### 说明
+
+当前仍是 alpha 版本。
+如安装后命令没有立即出现，请先重启 gateway 再验证。

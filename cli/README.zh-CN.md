@@ -1,5 +1,7 @@
 # mimo-voice-openclaw-cli
 
+[中文说明](./README.zh-CN.md) | [English](./README.md)
+
 MiMo Voice 的 alpha 安装 CLI。
 
 这个 CLI 用来安装、配置和验证：
@@ -18,6 +20,21 @@ MiMo Voice 的 alpha 安装 CLI。
 - `openclaw`
 
 如果你使用 WSL，请优先使用 `python3`，不要依赖 bare `python`。
+
+## 先安装 ffmpeg
+
+Ubuntu / WSL：
+
+```bash
+sudo apt update
+sudo apt install -y ffmpeg
+```
+
+macOS（Homebrew）：
+
+```bash
+brew install ffmpeg
+```
 
 ## 新手最简单的用法
 
