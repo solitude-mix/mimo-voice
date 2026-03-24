@@ -353,6 +353,9 @@ OpenClaw 插件，负责：
 
 - [CLI 安装与使用说明（中文）](./cli/README.zh-CN.md)
 - [CLI install guide (English)](./cli/README.md)
+- [配置说明（英文）](./docs/configuration.md)
+- [OpenClaw 接入说明（英文）](./docs/openclaw-integration.md)
+- [示例配置](./examples/config.example.yaml)
 - [Service 说明](./service/SERVICE.zh-CN.md)
 - [Plugin 说明](./plugin/PLUGIN.zh-CN.md)
 - [架构方案（中文草案）](./ARCHITECTURE_PLAN.zh-CN.md)

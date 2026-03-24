@@ -353,6 +353,9 @@ If this is your first time here, read in this order:
 
 - [CLI install guide](./cli/README.md)
 - [CLI 安装与使用说明（中文）](./cli/README.zh-CN.md)
+- [Configuration guide](./docs/configuration.md)
+- [OpenClaw integration guide](./docs/openclaw-integration.md)
+- [Example config](./examples/config.example.yaml)
 - [Service details](./service/SERVICE.md)
 - [Plugin details](./plugin/PLUGIN.md)
 - [Architecture plan (Chinese draft)](./ARCHITECTURE_PLAN.zh-CN.md)
