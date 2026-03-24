@@ -7,7 +7,31 @@ type PluginConfig = {
   serviceBaseUrl?: string;
   serviceDir?: string;
   defaultChatId?: string;
+  defaultChannel?: string;
   preferCli?: boolean;
+};
+
+type GenerateSpeechParams = {
+  text: string;
+  voice?: string;
+  userPrompt?: string;
+  splitLongText?: boolean;
+  maxCharsPerChunk?: number;
+  saveFile?: boolean;
+};
+
+type DeliverVoiceParams = {
+  channel?: string;
+  text: string;
+  chatId?: string;
+  voice?: string;
+  userPrompt?: string;
+  style?: string;
+  emotion?: string;
+  dialect?: string;
+  keepFile?: boolean;
+  splitLongText?: boolean;
+  maxCharsPerChunk?: number;
 };
 
 const pluginDir = path.dirname(fileURLToPath(import.meta.url));
@@ -23,6 +47,7 @@ const mimoVoiceConfigSchema = {
       serviceBaseUrl: typeof raw.serviceBaseUrl === 'string' ? raw.serviceBaseUrl : 'http://127.0.0.1:8091',
       serviceDir: typeof raw.serviceDir === 'string' ? raw.serviceDir : defaultServiceDir,
       defaultChatId: typeof raw.defaultChatId === 'string' ? raw.defaultChatId : undefined,
+      defaultChannel: typeof raw.defaultChannel === 'string' ? raw.defaultChannel : 'telegram',
       preferCli: typeof raw.preferCli === 'boolean' ? raw.preferCli : false,
     };
   },
@@ -31,6 +56,7 @@ const mimoVoiceConfigSchema = {
     serviceBaseUrl: { label: 'Service Base URL' },
     serviceDir: { label: 'Service Directory' },
     defaultChatId: { label: 'Default Telegram Chat ID' },
+    defaultChannel: { label: 'Default Delivery Channel' },
     preferCli: { label: 'Prefer local CLI over HTTP' },
   },
 };
@@ -83,8 +109,12 @@ const MimoVoiceToolSchema = {
   properties: {
     action: {
       type: 'string',
-      enum: ['status', 'tts', 'send_telegram_voice'],
+      enum: ['status', 'tts', 'generate_speech', 'send_telegram_voice', 'deliver_voice'],
       description: 'MiMo voice action to run',
+    },
+    channel: {
+      type: 'string',
+      description: 'Delivery channel. Current supported value: telegram',
     },
     text: {
       type: 'string',
@@ -128,32 +158,95 @@ const mimoVoicePlugin = {
     const config = mimoVoiceConfigSchema.parse(api.pluginConfig);
     const logger = api.logger ?? console;
 
+    async function checkStatus() {
+      const url = `${getServiceBaseUrl(config)}/health`;
+      const res = await fetch(url);
+      const text = await res.text();
+      let body: any = null;
+      try { body = text ? JSON.parse(text) : null; } catch {}
+      return { ok: res.ok, status: res.status, body };
+    }
+
+    async function generateSpeech(params: GenerateSpeechParams) {
+      const text = String(params?.text || '').trim();
+      if (!text) throw new Error('text required');
+      return config.preferCli
+        ? await runCli(getServiceDir(config), ['tts', text, '--voice', params.voice || 'default_zh', '--save-file'])
+        : await postJson(`${getServiceBaseUrl(config)}/tts`, {
+            text,
+            voice: params.voice || 'default_zh',
+            user_prompt: params.userPrompt,
+            save_file: params.saveFile ?? true,
+            split_long_text: params.splitLongText ?? true,
+            max_chars_per_chunk: params.maxCharsPerChunk ?? 120,
+          });
+    }
+
+    async function deliverVoice(params: DeliverVoiceParams) {
+      const channel = params.channel || config.defaultChannel || 'telegram';
+      if (channel !== 'telegram') {
+        throw new Error(`Unsupported channel: ${channel}`);
+      }
+      const text = String(params?.text || '').trim();
+      if (!text) throw new Error('text required');
+      const chatId = params.chatId || config.defaultChatId;
+      if (!chatId) throw new Error('Missing chatId and no defaultChatId configured');
+
+      return config.preferCli
+        ? await runCli(getServiceDir(config), [
+            'send-telegram-voice',
+            text,
+            '--chat-id',
+            String(chatId),
+            '--voice',
+            params.voice || 'default_zh',
+            ...(params.style ? ['--style', params.style] : []),
+            ...(params.emotion ? ['--emotion', params.emotion] : []),
+            ...(params.dialect ? ['--dialect', params.dialect] : []),
+            ...(params.keepFile ? ['--keep-file'] : []),
+          ])
+        : await postJson(`${getServiceBaseUrl(config)}/telegram/send-voice`, {
+            text,
+            chat_id: String(chatId),
+            voice: params.voice || 'default_zh',
+            user_prompt: params.userPrompt,
+            style: params.style,
+            emotion: params.emotion,
+            dialect: params.dialect,
+            keep_file: params.keepFile ?? false,
+            split_long_text: params.splitLongText ?? true,
+            max_chars_per_chunk: params.maxCharsPerChunk ?? 120,
+          });
+    }
+
     api.registerGatewayMethod('mimoVoice.status', async ({ respond }: any) => {
       try {
-        const url = `${getServiceBaseUrl(config)}/health`;
-        const res = await fetch(url);
-        const text = await res.text();
-        let body: any = null;
-        try { body = text ? JSON.parse(text) : null; } catch {}
-        respond(true, { ok: res.ok, status: res.status, body });
+        respond(true, await checkStatus());
       } catch (err: any) {
         respond(false, { ok: false, error: err?.message || String(err) });
       }
     });
 
+    api.registerGatewayMethod('mimoVoice.generateSpeech', async ({ params, respond }: any) => {
+      try {
+        respond(true, await generateSpeech(params));
+      } catch (err: any) {
+        respond(false, { ok: false, error: err?.message || String(err) });
+      }
+    });
+
+    api.registerGatewayMethod('mimoVoice.deliverVoice', async ({ params, respond }: any) => {
+      try {
+        respond(true, await deliverVoice(params));
+      } catch (err: any) {
+        respond(false, { ok: false, error: err?.message || String(err) });
+      }
+    });
+
+    // Compatibility aliases for current alpha API.
     api.registerGatewayMethod('mimoVoice.tts', async ({ params, respond }: any) => {
       try {
-        const data = config.preferCli
-          ? await runCli(getServiceDir(config), ['tts', params.text, '--voice', params.voice || 'default_zh', '--save-file'])
-          : await postJson(`${getServiceBaseUrl(config)}/tts`, {
-              text: params.text,
-              voice: params.voice || 'default_zh',
-              user_prompt: params.userPrompt,
-              save_file: true,
-              split_long_text: params.splitLongText ?? true,
-              max_chars_per_chunk: params.maxCharsPerChunk ?? 120,
-            });
-        respond(true, data);
+        respond(true, await generateSpeech(params));
       } catch (err: any) {
         respond(false, { ok: false, error: err?.message || String(err) });
       }
@@ -161,34 +254,7 @@ const mimoVoicePlugin = {
 
     api.registerGatewayMethod('mimoVoice.sendTelegramVoice', async ({ params, respond }: any) => {
       try {
-        const chatId = params.chatId || config.defaultChatId;
-        if (!chatId) throw new Error('Missing chatId and no defaultChatId configured');
-        const data = config.preferCli
-          ? await runCli(getServiceDir(config), [
-              'send-telegram-voice',
-              params.text,
-              '--chat-id',
-              String(chatId),
-              '--voice',
-              params.voice || 'default_zh',
-              ...(params.style ? ['--style', params.style] : []),
-              ...(params.emotion ? ['--emotion', params.emotion] : []),
-              ...(params.dialect ? ['--dialect', params.dialect] : []),
-              ...(params.keepFile ? ['--keep-file'] : []),
-            ])
-          : await postJson(`${getServiceBaseUrl(config)}/telegram/send-voice`, {
-              text: params.text,
-              chat_id: String(chatId),
-              voice: params.voice || 'default_zh',
-              user_prompt: params.userPrompt,
-              style: params.style,
-              emotion: params.emotion,
-              dialect: params.dialect,
-              keep_file: params.keepFile ?? false,
-              split_long_text: params.splitLongText ?? true,
-              max_chars_per_chunk: params.maxCharsPerChunk ?? 120,
-            });
-        respond(true, data);
+        respond(true, await deliverVoice({ ...params, channel: 'telegram' }));
       } catch (err: any) {
         respond(false, { ok: false, error: err?.message || String(err) });
       }
@@ -199,9 +265,7 @@ const mimoVoicePlugin = {
 
       cmd.command('status').action(async () => {
         try {
-          const url = `${getServiceBaseUrl(config)}/health`;
-          const res = await fetch(url);
-          console.log(await res.text());
+          console.log(JSON.stringify(await checkStatus(), null, 2));
         } catch (err: any) {
           console.log(JSON.stringify({ ok: false, error: err?.message || String(err) }, null, 2));
           process.exitCode = 1;
@@ -212,11 +276,15 @@ const mimoVoicePlugin = {
         .argument('<text>')
         .option('--voice <voice>', 'Voice preset', 'default_zh')
         .action(async (text: string, options: any) => {
-          const data = await postJson(`${getServiceBaseUrl(config)}/tts`, {
-            text,
-            voice: options.voice,
-            save_file: true,
-          });
+          const data = await generateSpeech({ text, voice: options.voice, saveFile: true });
+          console.log(JSON.stringify(data, null, 2));
+        });
+
+      cmd.command('generate-speech')
+        .argument('<text>')
+        .option('--voice <voice>', 'Voice preset', 'default_zh')
+        .action(async (text: string, options: any) => {
+          const data = await generateSpeech({ text, voice: options.voice, saveFile: true });
           console.log(JSON.stringify(data, null, 2));
         });
 
@@ -226,9 +294,27 @@ const mimoVoicePlugin = {
         .option('--voice <voice>', 'Voice preset', 'default_zh')
         .option('--style <style>', 'Style text')
         .action(async (text: string, options: any) => {
-          const data = await postJson(`${getServiceBaseUrl(config)}/telegram/send-voice`, {
+          const data = await deliverVoice({
+            channel: 'telegram',
             text,
-            chat_id: String(options.chatId),
+            chatId: String(options.chatId),
+            voice: options.voice,
+            style: options.style,
+          });
+          console.log(JSON.stringify(data, null, 2));
+        });
+
+      cmd.command('deliver-voice')
+        .argument('<text>')
+        .requiredOption('--chat-id <chatId>', 'Telegram chat id')
+        .option('--channel <channel>', 'Delivery channel', config.defaultChannel || 'telegram')
+        .option('--voice <voice>', 'Voice preset', 'default_zh')
+        .option('--style <style>', 'Style text')
+        .action(async (text: string, options: any) => {
+          const data = await deliverVoice({
+            channel: options.channel,
+            text,
+            chatId: String(options.chatId),
             voice: options.voice,
             style: options.style,
           });
@@ -242,9 +328,8 @@ const mimoVoicePlugin = {
       requireAuth: true,
       handler: async () => {
         try {
-          const res = await fetch(`${getServiceBaseUrl(config)}/health`);
-          const text = await res.text();
-          return { text: `MiMo service: ${text}` };
+          const status = await checkStatus();
+          return { text: `MiMo service: ${JSON.stringify(status.body ?? status)}` };
         } catch (err: any) {
           return { text: `MiMo service unavailable: ${err?.message || String(err)}` };
         }
@@ -255,7 +340,7 @@ const mimoVoicePlugin = {
       {
         name: 'mimo_voice',
         label: 'MiMo Voice',
-        description: 'Use the local MiMo voice service through OpenClaw to check service health, synthesize speech, or send Telegram voice messages.',
+        description: 'Use the local MiMo voice service through OpenClaw to check service health, generate speech, or deliver voice messages.',
         parameters: MimoVoiceToolSchema,
         async execute(_toolCallId: string, params: any) {
           const json = (payload: unknown) => ({
@@ -264,54 +349,19 @@ const mimoVoicePlugin = {
           });
 
           if (params?.action === 'status') {
-            const res = await fetch(`${getServiceBaseUrl(config)}/health`);
-            const text = await res.text();
-            let body: any = null;
-            try { body = text ? JSON.parse(text) : null; } catch {}
-            return json({ ok: res.ok, status: res.status, body });
+            return json(await checkStatus());
           }
 
-          if (params?.action === 'tts') {
-            const text = String(params?.text || '').trim();
-            if (!text) throw new Error('text required');
-            const data = config.preferCli
-              ? await runCli(getServiceDir(config), ['tts', text, '--voice', params.voice || 'default_zh', '--save-file'])
-              : await postJson(`${getServiceBaseUrl(config)}/tts`, {
-                  text,
-                  voice: params.voice || 'default_zh',
-                  save_file: true,
-                });
-            return json(data);
+          if (params?.action === 'tts' || params?.action === 'generate_speech') {
+            return json(await generateSpeech(params));
           }
 
           if (params?.action === 'send_telegram_voice') {
-            const text = String(params?.text || '').trim();
-            if (!text) throw new Error('text required');
-            const chatId = params.chatId || config.defaultChatId;
-            if (!chatId) throw new Error('chatId required');
-            const data = config.preferCli
-              ? await runCli(getServiceDir(config), [
-                  'send-telegram-voice',
-                  text,
-                  '--chat-id',
-                  String(chatId),
-                  '--voice',
-                  params.voice || 'default_zh',
-                  ...(params.style ? ['--style', params.style] : []),
-                  ...(params.emotion ? ['--emotion', params.emotion] : []),
-                  ...(params.dialect ? ['--dialect', params.dialect] : []),
-                  ...(params.keepFile ? ['--keep-file'] : []),
-                ])
-              : await postJson(`${getServiceBaseUrl(config)}/telegram/send-voice`, {
-                  text,
-                  chat_id: String(chatId),
-                  voice: params.voice || 'default_zh',
-                  style: params.style,
-                  emotion: params.emotion,
-                  dialect: params.dialect,
-                  keep_file: params.keepFile ?? false,
-                });
-            return json(data);
+            return json(await deliverVoice({ ...params, channel: 'telegram' }));
+          }
+
+          if (params?.action === 'deliver_voice') {
+            return json(await deliverVoice(params));
           }
 
           throw new Error(`unsupported action: ${String(params?.action || '')}`);
