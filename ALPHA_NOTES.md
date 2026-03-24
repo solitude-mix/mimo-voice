@@ -61,3 +61,11 @@ If something fails, these outputs are useful:
 - `mimo-voice-openclaw doctor`
 - `openclaw plugins info mimo-voice-openclaw`
 - whether you restarted the gateway
+
+## Maintainer-only references
+
+These are useful for maintainers, not typical end users:
+- `docs/release-privacy-checklist.md`
+- `ARCHITECTURE_PLAN.zh-CN.md`
+- `RELEASE_ALPHA_0.1.0-alpha.4.md`
+- `GITHUB_RELEASE_0.1.0-alpha.4.md`

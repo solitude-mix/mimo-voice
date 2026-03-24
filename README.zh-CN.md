@@ -352,19 +352,17 @@ OpenClaw 插件，负责：
 
 ## 更多文档
 
+### 给用户
+
 - [CLI 安装与使用说明（中文）](./cli/README.zh-CN.md)
 - [CLI install guide (English)](./cli/README.md)
 - [快速开始（英文）](./docs/quickstart.md)
 - [配置说明（英文）](./docs/configuration.md)
 - [OpenClaw 接入说明（英文）](./docs/openclaw-integration.md)
-- [发布前隐私检查清单（英文）](./docs/release-privacy-checklist.md)
 - [示例配置](./examples/config.example.yaml)
 - [Service 说明](./service/SERVICE.zh-CN.md)
 - [Plugin 说明](./plugin/PLUGIN.zh-CN.md)
-- [架构方案（中文草案）](./ARCHITECTURE_PLAN.zh-CN.md)
 - [Alpha 版本说明](./ALPHA_NOTES.zh-CN.md)
-- [alpha.4 发布步骤](./RELEASE_ALPHA_0.1.0-alpha.4.zh-CN.md)
-- [alpha.4 GitHub Release 草稿](./GITHUB_RELEASE_0.1.0-alpha.4.md)
 
 ---
 

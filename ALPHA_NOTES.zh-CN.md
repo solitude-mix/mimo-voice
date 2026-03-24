@@ -61,3 +61,11 @@ openclaw mimo-voice status
 - `mimo-voice-openclaw doctor`
 - `openclaw plugins info mimo-voice-openclaw`
 - 是否执行过 gateway 重启
+
+## 仅维护者参考
+
+这些更适合维护者，而不是普通用户：
+- `docs/release-privacy-checklist.md`
+- `ARCHITECTURE_PLAN.zh-CN.md`
+- `RELEASE_ALPHA_0.1.0-alpha.4.md`
+- `GITHUB_RELEASE_0.1.0-alpha.4.md`

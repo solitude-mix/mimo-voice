@@ -352,19 +352,17 @@ If this is your first time here, read in this order:
 
 ## More documentation
 
+### For users
+
 - [CLI install guide](./cli/README.md)
 - [CLI 安装与使用说明（中文）](./cli/README.zh-CN.md)
 - [Quick start](./docs/quickstart.md)
 - [Configuration guide](./docs/configuration.md)
 - [OpenClaw integration guide](./docs/openclaw-integration.md)
-- [Release privacy checklist](./docs/release-privacy-checklist.md)
 - [Example config](./examples/config.example.yaml)
 - [Service details](./service/SERVICE.md)
 - [Plugin details](./plugin/PLUGIN.md)
-- [Architecture plan (Chinese draft)](./ARCHITECTURE_PLAN.zh-CN.md)
 - [Alpha notes](./ALPHA_NOTES.md)
-- [Release steps for alpha.4](./RELEASE_ALPHA_0.1.0-alpha.4.md)
-- [GitHub release draft for alpha.4](./GITHUB_RELEASE_0.1.0-alpha.4.md)
 
 ---
 
