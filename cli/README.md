@@ -441,6 +441,8 @@ So the most realistic path today is:
 - confirm your model API really works
 - get Telegram + OpenClaw working first
 - then evolve toward a fuller config model and multi-channel design
+w working first
+- then evolve toward a fuller config model and multi-channel design
 penClaw working first
 - then evolve toward a fuller config model and multi-channel design
 nel design
