@@ -21,13 +21,19 @@ MiMo Voice 是一个语音项目，用来把 MiMo TTS、Telegram voice 发送，
 
 ## 快速开始
 
-### 1. 安装 ffmpeg
+### 1. 先安装系统依赖
 
 Ubuntu / WSL：
 
 ```bash
 sudo apt update
-sudo apt install -y ffmpeg
+sudo apt install -y ffmpeg python3-venv
+```
+
+如果你的系统 Python 是 3.12，建议额外安装：
+
+```bash
+sudo apt install -y python3.12-venv
 ```
 
 macOS（Homebrew）：
@@ -36,17 +42,29 @@ macOS（Homebrew）：
 brew install ffmpeg
 ```
 
+> 注意：仅仅安装 `python3` 还不够。
+> 这个项目的安装流程会创建虚拟环境并在其中执行 `python -m pip ...`。
+> 如果系统缺少完整的 `venv/ensurepip` 组件，`.venv` 可能会创建成功，但里面没有可用的 `pip`。
+
 ### 2. 检查环境
 
 ```bash
 npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 ```
 
+`doctor` 现在会额外检查：
+- `python3 -m venv` 是否可用
+- `python3 -m ensurepip` 是否可用
+- 如果 `.venv` 已存在，里面的 `pip` 是否可用
+
 ### 3. 安装
 
 ```bash
 npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
+
+如果发现已有 `.venv` 但其中缺少 `pip`，安装器会尝试自动删除并重建一次。
+如果重建后仍然没有 `pip`，通常说明系统层面的 `python3-venv` / `python3.12-venv` 没装完整。
 
 ### 4. 验证
 
@@ -84,6 +102,45 @@ npm install -g mimo-voice-openclaw-cli
 ### 为什么第一次 `doctor` 可能会报 `service_health` 失败？
 通常是因为服务还没启动。
 先运行 `install`，再运行一次 `doctor` 就行。
+
+### 为什么 `install` 会报 `No module named pip`？
+这通常说明当前机器上的 Python 虚拟环境不完整，或者历史残留的 `.venv` 已损坏。
+
+典型报错：
+
+```bash
+/home/xxx/.venv/bin/python3: No module named pip
+```
+
+处理步骤：
+
+1. 安装系统依赖（Ubuntu / WSL）：
+
+```bash
+sudo apt update
+sudo apt install -y python3-venv
+```
+
+如果你的系统使用 Python 3.12，再执行：
+
+```bash
+sudo apt install -y python3.12-venv
+```
+
+2. 删除旧的虚拟环境：
+
+```bash
+rm -rf /home/zhouts/.openclaw/mimo-voice-openclaw/service/.venv
+```
+
+3. 重新执行安装：
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+```
+
+原因是当前安装流程在发现 `.venv` 已存在时会优先复用；
+如果这个 `.venv` 本身缺少 `pip`，后续安装就会失败。
 
 ### 为什么建议重启 gateway？
 插件安装后，OpenClaw 有时需要重启一次，命令显示才会更稳定。

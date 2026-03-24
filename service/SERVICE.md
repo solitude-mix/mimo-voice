@@ -15,11 +15,25 @@ It provides:
 
 - Python 3.10+
 - `python3`
+- a working Python `venv` / `pip` environment
 - `ffmpeg`
 - `MIMO_API_KEY`
 - `TELEGRAM_BOT_TOKEN` (only needed for Telegram voice sending)
 
 If you use WSL, prefer `python3` instead of bare `python`.
+
+On Ubuntu / WSL, you will usually also need:
+
+```bash
+sudo apt update
+sudo apt install -y python3-venv
+```
+
+If your system Python is 3.12, also install:
+
+```bash
+sudo apt install -y python3.12-venv
+```
 
 ## Start
 
@@ -29,6 +43,15 @@ python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -r requirements.txt
 bash scripts/start.sh
+```
+
+If `python3 -m pip ...` fails with `No module named pip`, the current system is missing a complete `venv` / `ensurepip` setup, or the existing `.venv` is broken. A common fix is:
+
+```bash
+rm -rf .venv
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
 ```
 
 Default address:

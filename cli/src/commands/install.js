@@ -72,6 +72,65 @@ function recordPluginInstall(paths, steps, mode) {
   steps.push({ step: 'plugins_record_install', ok: true, detail: result.changed ? `Recorded ${PLUGIN_ID} install provenance (${mode})` : `Install provenance already up to date for ${PLUGIN_ID}` });
 }
 
+function shouldRecreateVenv(paths) {
+  const venvPython = path.join(paths.venvDir, 'bin', 'python3');
+  return fs.existsSync(paths.venvDir) && !fs.existsSync(venvPython);
+}
+
+async function venvHasPip(paths) {
+  const venvPython = path.join(paths.venvDir, 'bin', 'python3');
+  if (!fs.existsSync(venvPython)) return false;
+
+  try {
+    await safeExec(venvPython, ['-m', 'pip', '--version'], { cwd: paths.serviceDir });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function createOrRepairVenv(paths, steps) {
+  const hadExistingVenv = fs.existsSync(paths.venvDir);
+
+  if (shouldRecreateVenv(paths)) {
+    fs.rmSync(paths.venvDir, { recursive: true, force: true });
+    steps.push({ step: 'venv_repair', ok: true, detail: `Removed incomplete venv without python executable: ${paths.venvDir}` });
+  }
+
+  if (!fs.existsSync(paths.venvDir)) {
+    const createVenv = await safeExec('python3', ['-m', 'venv', paths.venvDir]);
+    steps.push({ step: 'venv_create', ok: true, detail: (createVenv.stdout || createVenv.stderr || '').trim() || `Created ${paths.venvDir}` });
+  } else {
+    steps.push({ step: 'venv_create', ok: true, detail: `Using existing venv: ${paths.venvDir}` });
+  }
+
+  const hasPip = await venvHasPip(paths);
+  if (hasPip) {
+    steps.push({ step: 'venv_pip_check', ok: true, detail: `pip is available in ${paths.venvDir}` });
+    return;
+  }
+
+  if (hadExistingVenv) {
+    fs.rmSync(paths.venvDir, { recursive: true, force: true });
+    steps.push({ step: 'venv_repair', ok: true, detail: `Removed existing venv without pip: ${paths.venvDir}` });
+
+    const recreateVenv = await safeExec('python3', ['-m', 'venv', paths.venvDir]);
+    steps.push({ step: 'venv_recreate', ok: true, detail: (recreateVenv.stdout || recreateVenv.stderr || '').trim() || `Recreated ${paths.venvDir}` });
+
+    const repairedHasPip = await venvHasPip(paths);
+    if (repairedHasPip) {
+      steps.push({ step: 'venv_pip_check', ok: true, detail: `pip is available in recreated venv: ${paths.venvDir}` });
+      return;
+    }
+  }
+
+  throw new Error([
+    `Python virtual environment is missing pip: ${paths.venvDir}`,
+    'Install the system venv package first (for example: sudo apt install -y python3-venv or python3.12-venv),',
+    'then remove the broken .venv and run install again.',
+  ].join(' '));
+}
+
 export async function installCommand() {
   const doctor = await runDoctor();
   const paths = resolveInstallPaths();
@@ -97,12 +156,7 @@ export async function installCommand() {
   const venvPython = path.join(paths.venvDir, 'bin', 'python3');
 
   try {
-    if (!fs.existsSync(paths.venvDir)) {
-      const createVenv = await safeExec('python3', ['-m', 'venv', paths.venvDir]);
-      steps.push({ step: 'venv_create', ok: true, detail: (createVenv.stdout || createVenv.stderr || '').trim() || `Created ${paths.venvDir}` });
-    } else {
-      steps.push({ step: 'venv_create', ok: true, detail: `Using existing venv: ${paths.venvDir}` });
-    }
+    await createOrRepairVenv(paths, steps);
   } catch (err) {
     steps.push({ step: 'venv_create', ok: false, detail: String(err.stderr || err.stdout || err.message || err) });
     console.log(JSON.stringify({ ok: false, steps }, null, 2));
@@ -114,7 +168,11 @@ export async function installCommand() {
     const pipUpgrade = await safeExec(venvPython, ['-m', 'pip', 'install', '--upgrade', 'pip'], { cwd: paths.serviceDir });
     steps.push({ step: 'pip_upgrade', ok: true, detail: (pipUpgrade.stdout || pipUpgrade.stderr || '').trim().split('\n').slice(-3).join('\n') || 'pip upgraded' });
   } catch (err) {
-    steps.push({ step: 'pip_upgrade', ok: false, detail: String(err.stderr || err.stdout || err.message || err) });
+    steps.push({
+      step: 'pip_upgrade',
+      ok: false,
+      detail: `${String(err.stderr || err.stdout || err.message || err)}\nHint: if pip is missing, install python3-venv / python3.12-venv and remove ${paths.venvDir} before retrying.`,
+    });
     console.log(JSON.stringify({ ok: false, steps }, null, 2));
     process.exitCode = 1;
     return;

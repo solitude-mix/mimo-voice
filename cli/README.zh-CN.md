@@ -18,16 +18,23 @@ MiMo Voice 的 alpha 安装 CLI。
 - `python3`
 - `ffmpeg`
 - `openclaw`
+- 可用的 Python `venv` / `pip` 环境
 
 如果你使用 WSL，请优先使用 `python3`，不要依赖 bare `python`。
 
-## 先安装 ffmpeg
+## 先安装系统依赖
 
 Ubuntu / WSL：
 
 ```bash
 sudo apt update
-sudo apt install -y ffmpeg
+sudo apt install -y ffmpeg python3-venv
+```
+
+如果你的系统 Python 是 3.12，建议额外安装：
+
+```bash
+sudo apt install -y python3.12-venv
 ```
 
 macOS（Homebrew）：
@@ -35,6 +42,9 @@ macOS（Homebrew）：
 ```bash
 brew install ffmpeg
 ```
+
+> 注意：`python3 -m venv --help` 可用，并不代表新创建的虚拟环境一定带有可用的 `pip`。
+> 某些 Ubuntu / WSL 环境缺少完整的 `ensurepip`/`venv` 组件时，会出现 `.venv` 创建成功但 `pip` 不可用的情况。
 
 ## 新手最简单的用法
 
@@ -69,11 +79,30 @@ mimo-voice-openclaw upgrade
 npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 ```
 
+`doctor` 会检查：
+- `python3`
+- `ffmpeg`
+- `openclaw`
+- `python3 -m venv`
+- `python3 -m ensurepip`
+- service 路径
+- plugin 路径
+- 如果 `.venv` 已存在，检查其中的 `pip` 是否可用
+- service 健康状态
+
 ### 2. 安装或刷新
 
 ```bash
 npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
+
+安装流程会：
+- 准备 service 资源
+- 检查或创建 venv
+- 如果已有 `.venv` 缺少 `pip`，尝试自动删除并重建一次
+- 安装 Python 依赖
+- 部署 plugin
+- 验证 service 健康状态
 
 ### 3. 写入插件配置
 
@@ -129,6 +158,45 @@ npm install -g mimo-voice-openclaw-cli
 通常是因为服务还没启动。
 先运行 `install`，再运行一次 `doctor` 即可。
 
+### 为什么 `install` 会报 `No module named pip`？
+这通常说明当前机器上的 Python 虚拟环境不完整，或者历史残留的 `.venv` 已损坏。
+
+常见现象：
+
+```bash
+/home/xxx/.venv/bin/python3: No module named pip
+```
+
+处理步骤：
+
+1. 先安装系统依赖（Ubuntu / WSL）：
+
+```bash
+sudo apt update
+sudo apt install -y python3-venv
+```
+
+如果你的系统使用 Python 3.12，再执行：
+
+```bash
+sudo apt install -y python3.12-venv
+```
+
+2. 删除旧的虚拟环境：
+
+```bash
+rm -rf /home/zhouts/.openclaw/mimo-voice-openclaw/service/.venv
+```
+
+3. 重新执行安装：
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+```
+
+原因是当前安装流程在发现 `.venv` 已存在时会优先复用；
+如果这个 `.venv` 本身缺少 `pip`，后续安装就会失败。
+
 ### 为什么建议重启 gateway？
 插件安装后，OpenClaw 有时需要重启一次，命令显示才会更稳定。
 
@@ -139,14 +207,18 @@ npm install -g mimo-voice-openclaw-cli
 - `python3`
 - `ffmpeg`
 - `openclaw`
+- `python3 -m venv`
+- `python3 -m ensurepip`
 - service 路径
 - plugin 路径
+- 已存在 `.venv` 的 pip 可用性
 - service 健康状态
 
 ### `install`
 执行：
 - service 资源准备
 - venv 检查或创建
+- 缺失 pip 的旧 `.venv` 自动修复
 - Python 依赖安装
 - plugin 部署
 - service 健康验证

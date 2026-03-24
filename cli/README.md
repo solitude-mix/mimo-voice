@@ -18,16 +18,23 @@ Current version:
 - `python3`
 - `ffmpeg`
 - `openclaw`
+- a working Python `venv` / `pip` environment
 
 If you use WSL, prefer `python3` instead of bare `python`.
 
-## Install ffmpeg first
+## Install system dependencies first
 
 Ubuntu / WSL:
 
 ```bash
 sudo apt update
-sudo apt install -y ffmpeg
+sudo apt install -y ffmpeg python3-venv
+```
+
+If your system Python is 3.12, also install:
+
+```bash
+sudo apt install -y python3.12-venv
 ```
 
 macOS (Homebrew):
@@ -35,6 +42,9 @@ macOS (Homebrew):
 ```bash
 brew install ffmpeg
 ```
+
+> Note: `python3 -m venv --help` succeeding does not guarantee that a newly created virtual environment will contain a working `pip`.
+> On some Ubuntu / WSL environments, a partial `venv` / `ensurepip` setup can create `.venv` successfully while still leaving it without usable `pip`.
 
 ## Easiest way to start
 
@@ -69,11 +79,30 @@ mimo-voice-openclaw upgrade
 npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 ```
 
+`doctor` checks:
+- `python3`
+- `ffmpeg`
+- `openclaw`
+- `python3 -m venv`
+- `python3 -m ensurepip`
+- service paths
+- plugin paths
+- whether an existing `.venv` already has a working `pip`
+- service health
+
 ### 2. Install or refresh
 
 ```bash
 npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ```
+
+The install flow will:
+- prepare service assets
+- check or create the venv
+- automatically try to repair an existing `.venv` if it is missing `pip`
+- install Python dependencies
+- deploy the plugin
+- verify service health
 
 ### 3. Configure the plugin
 
@@ -127,6 +156,45 @@ npm install -g mimo-voice-openclaw-cli
 Usually because the service is not running yet.
 Run `install` first, then run `doctor` again.
 
+### Why does `install` fail with `No module named pip`?
+This usually means the current machine does not have a complete Python virtual-environment setup, or that an old `.venv` is broken.
+
+Typical error:
+
+```bash
+/home/xxx/.venv/bin/python3: No module named pip
+```
+
+Recommended fix:
+
+1. Install the system packages first (Ubuntu / WSL):
+
+```bash
+sudo apt update
+sudo apt install -y python3-venv
+```
+
+If your system uses Python 3.12, also run:
+
+```bash
+sudo apt install -y python3.12-venv
+```
+
+2. Remove the old virtual environment:
+
+```bash
+rm -rf /home/zhouts/.openclaw/mimo-voice-openclaw/service/.venv
+```
+
+3. Run install again:
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+```
+
+The install flow reuses an existing `.venv` when it finds one.
+If that `.venv` is missing `pip`, the later install steps fail.
+
 ### Why restart the gateway?
 After plugin installation, OpenClaw may need a restart before commands appear consistently.
 
@@ -137,14 +205,18 @@ Checks:
 - `python3`
 - `ffmpeg`
 - `openclaw`
+- `python3 -m venv`
+- `python3 -m ensurepip`
 - service paths
 - plugin paths
+- pip availability inside an existing `.venv`
 - service health
 
 ### `install`
 Performs:
 - service asset preparation
 - venv check or creation
+- automatic repair for an existing `.venv` missing `pip`
 - Python dependency installation
 - plugin deployment
 - service health verification

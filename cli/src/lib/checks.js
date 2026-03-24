@@ -27,6 +27,44 @@ async function hasCommand(command, args = ['--version']) {
   }
 }
 
+async function checkSystemEnsurePip() {
+  try {
+    await execFileAsync('python3', ['-m', 'ensurepip', '--version'], { timeout: 10000 });
+    return {
+      ok: true,
+      detail: 'python3 -m ensurepip --version',
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      detail: String(err?.stderr || err?.stdout || err?.message || err),
+    };
+  }
+}
+
+async function checkVenvPip(venvDir) {
+  const venvPython = path.join(venvDir, 'bin', 'python3');
+  if (!fs.existsSync(venvPython)) {
+    return {
+      ok: false,
+      detail: `Missing venv python: ${venvPython}`,
+    };
+  }
+
+  try {
+    await execFileAsync(venvPython, ['-m', 'pip', '--version'], { timeout: 10000 });
+    return {
+      ok: true,
+      detail: `${venvPython} -m pip --version`,
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      detail: String(err?.stderr || err?.stdout || err?.message || err),
+    };
+  }
+}
+
 export async function checkServiceHealth() {
   const { healthUrl } = resolveInstallPaths();
   try {
@@ -63,7 +101,17 @@ export async function runDoctor() {
   checks.push({ name: 'openclaw', ok: await hasCommand('openclaw', ['--version']), detail: 'openclaw --version' });
   checks.push({ name: 'curl', ok: await hasCommand('curl', ['--version']), detail: 'curl --version' });
   checks.push({ name: 'python_venv', ok: await hasCommand('python3', ['-m', 'venv', '--help']), detail: 'python3 -m venv --help' });
-  checks.push({ name: 'service_venv', ok: fs.existsSync(paths.venvDir), detail: paths.venvDir });
+
+  const ensurePip = await checkSystemEnsurePip();
+  checks.push({ name: 'python_ensurepip', ok: ensurePip.ok, detail: ensurePip.detail });
+
+  const serviceVenvExists = fs.existsSync(paths.venvDir);
+  checks.push({ name: 'service_venv', ok: serviceVenvExists, detail: paths.venvDir });
+
+  if (serviceVenvExists) {
+    const venvPip = await checkVenvPip(paths.venvDir);
+    checks.push({ name: 'service_venv_pip', ok: venvPip.ok, detail: venvPip.detail });
+  }
 
   const health = await checkServiceHealth();
   checks.push({ name: 'service_health', ok: health.ok, detail: health.detail || health.url });

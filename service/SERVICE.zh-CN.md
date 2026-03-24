@@ -13,11 +13,25 @@
 
 - Python 3.10+
 - `python3`
+- 可用的 Python `venv` / `pip` 环境
 - `ffmpeg`
 - `MIMO_API_KEY`
 - `TELEGRAM_BOT_TOKEN`（仅 Telegram 发送接口需要）
 
 如果你在 WSL 中运行，请优先使用 `python3`，不要依赖 bare `python`。
+
+Ubuntu / WSL 通常还需要安装：
+
+```bash
+sudo apt update
+sudo apt install -y python3-venv
+```
+
+如果你的系统 Python 是 3.12，建议额外安装：
+
+```bash
+sudo apt install -y python3.12-venv
+```
 
 ## 启动
 
@@ -27,6 +41,15 @@ python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -r requirements.txt
 bash scripts/start.sh
+```
+
+如果你在 `python3 -m pip ...` 这一步遇到 `No module named pip`，说明当前系统缺少完整的 `venv/ensurepip` 组件，或者现有 `.venv` 已损坏。常见修复方式：
+
+```bash
+rm -rf .venv
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
 ```
 
 默认地址：
