@@ -137,6 +137,13 @@ mimo-voice-openclaw doctor
 - `python3 -m ensurepip`
 - service paths
 - plugin paths
+- provider config presence (`MIMO_API_KEY`)
+- provider config overrides / defaults (`MIMO_API_URL`, `MIMO_MODEL`, `MIMO_DEFAULT_VOICE`, `MIMO_AUDIO_FORMAT`)
+- Telegram config presence (`TELEGRAM_BOT_TOKEN`)
+- Telegram API override / default (`TELEGRAM_API_BASE`)
+- provider endpoint reachability
+- Telegram API reachability
+- service status script output
 - whether an existing `.venv` already has working `pip`
 - service health
 
@@ -367,6 +374,9 @@ Checks:
 - plugin paths
 - provider env presence and defaults
 - Telegram env presence and defaults
+- provider endpoint reachability
+- Telegram API reachability
+- service status script output
 - pip availability inside an existing `.venv`
 - service health
 

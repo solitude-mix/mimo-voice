@@ -95,6 +95,32 @@ async function checkVenvPip(venvDir) {
   }
 }
 
+async function checkUrlReachable(url, { method = 'GET', timeoutMs = 10000 } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      method,
+      redirect: 'follow',
+      signal: controller.signal,
+    });
+    return {
+      ok: true,
+      detail: `${method} ${url} -> HTTP ${res.status}`,
+      status: res.status,
+      url,
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      detail: `${method} ${url} failed: ${String(err?.message || err)}`,
+      url,
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function checkServiceHealth() {
   const { healthUrl } = resolveInstallPaths();
   try {
@@ -113,13 +139,43 @@ export async function checkServiceHealth() {
   }
 }
 
+async function checkServiceStatusScript(statusScript, serviceDir) {
+  if (!fs.existsSync(statusScript)) {
+    return {
+      ok: false,
+      detail: `Missing status script: ${statusScript}`,
+    };
+  }
+  try {
+    const { stdout } = await execFileAsync('bash', ['scripts/status.sh'], { cwd: serviceDir, timeout: 10000 });
+    return {
+      ok: true,
+      detail: stdout.trim() || 'service status script returned OK',
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      detail: String(err?.stdout || err?.stderr || err?.message || err).trim(),
+    };
+  }
+}
+
 function summarizeDoctorOk(checks) {
   return checks.every((check) => {
     if (check.name === 'service_venv' && check.ok === false) {
       const healthCheck = checks.find((item) => item.name === 'service_health');
       return healthCheck?.ok === true;
     }
-    if (check.name === 'provider_api_url' || check.name === 'provider_model' || check.name === 'provider_default_voice' || check.name === 'provider_audio_format' || check.name === 'telegram_api_base') {
+    if (
+      check.name === 'provider_api_url' ||
+      check.name === 'provider_model' ||
+      check.name === 'provider_default_voice' ||
+      check.name === 'provider_audio_format' ||
+      check.name === 'telegram_api_base' ||
+      check.name === 'provider_endpoint_reachable' ||
+      check.name === 'telegram_api_reachable' ||
+      check.name === 'service_status_script'
+    ) {
       return true;
     }
     return check.ok;
@@ -155,6 +211,16 @@ export async function runDoctor() {
   checks.push({ name: 'provider_audio_format', ...checkOptionalEnv('MIMO_AUDIO_FORMAT', 'wav', 'provider audio format') });
   checks.push({ name: 'telegram_bot_token', ...checkRequiredEnv('TELEGRAM_BOT_TOKEN', 'Telegram delivery credential') });
   checks.push({ name: 'telegram_api_base', ...checkOptionalEnv('TELEGRAM_API_BASE', 'https://api.telegram.org', 'Telegram API base') });
+
+  const providerUrl = loadEnvValue('MIMO_API_URL') || 'https://api.xiaomimimo.com/v1/chat/completions';
+  const telegramApiBase = loadEnvValue('TELEGRAM_API_BASE') || 'https://api.telegram.org';
+  const providerReach = await checkUrlReachable(providerUrl, { method: 'POST', timeoutMs: 8000 });
+  checks.push({ name: 'provider_endpoint_reachable', ok: providerReach.ok, detail: providerReach.detail });
+  const telegramReach = await checkUrlReachable(telegramApiBase, { method: 'GET', timeoutMs: 8000 });
+  checks.push({ name: 'telegram_api_reachable', ok: telegramReach.ok, detail: telegramReach.detail });
+
+  const serviceStatus = await checkServiceStatusScript(paths.statusScript, paths.serviceDir);
+  checks.push({ name: 'service_status_script', ok: serviceStatus.ok, detail: serviceStatus.detail });
 
   const serviceVenvExists = fs.existsSync(paths.venvDir);
   checks.push({

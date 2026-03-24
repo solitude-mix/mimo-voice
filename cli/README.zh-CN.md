@@ -137,6 +137,13 @@ mimo-voice-openclaw doctor
 - `python3 -m ensurepip`
 - service 路径
 - plugin 路径
+- provider 配置是否存在（`MIMO_API_KEY`）
+- provider 配置覆盖 / 默认值（`MIMO_API_URL`、`MIMO_MODEL`、`MIMO_DEFAULT_VOICE`、`MIMO_AUDIO_FORMAT`）
+- Telegram 配置是否存在（`TELEGRAM_BOT_TOKEN`）
+- Telegram API 覆盖 / 默认值（`TELEGRAM_API_BASE`）
+- provider endpoint 是否可达
+- Telegram API 是否可达
+- service 状态脚本输出
 - 已存在 `.venv` 中的 `pip` 是否可用
 - service 健康状态
 
@@ -367,6 +374,9 @@ mimo-voice-openclaw install
 - plugin 路径
 - provider 环境变量是否存在以及默认值情况
 - Telegram 环境变量是否存在以及默认值情况
+- provider endpoint 连通性
+- Telegram API 连通性
+- service 状态脚本输出
 - 已存在 `.venv` 的 `pip` 可用性
 - service 健康状态
 
