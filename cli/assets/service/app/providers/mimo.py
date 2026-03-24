@@ -7,7 +7,7 @@ import time
 import urllib.request
 from typing import Optional
 
-from .config import Settings
+from ..core.config import Settings
 
 
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ class MimoClient:
 
     def synthesize(self, text: str, voice: Optional[str] = None, user_prompt: Optional[str] = None) -> bytes:
         started = time.perf_counter()
-        selected_voice = voice or self.settings.mimo_default_voice
+        selected_voice = voice or self.settings.provider.default_voice
         messages = []
         if user_prompt and user_prompt.strip():
             messages.append({"role": "user", "content": user_prompt.strip()})
@@ -59,3 +59,4 @@ class MimoClient:
         elapsed = time.perf_counter() - started
         logger.info("MiMo synth done bytes=%s elapsed=%.2fs", len(audio), elapsed)
         return audio
+

@@ -8,7 +8,7 @@ import time
 import urllib.request
 from typing import Optional
 
-from .config import Settings
+from ..core.config import Settings
 
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ class TelegramClient:
 
     def send_voice(self, chat_id: str, voice_path: pathlib.Path, reply_to_message_id: Optional[str] = None) -> dict:
         started = time.perf_counter()
-        url = f"{self.settings.telegram_api_base}/bot{self.settings.telegram_bot_token}/sendVoice"
+        url = f"{self.settings.channel.telegram.api_base}/bot{self.settings.channel.telegram.bot_token}/sendVoice"
         fields = {"chat_id": chat_id}
         if reply_to_message_id:
             fields["reply_to_message_id"] = reply_to_message_id

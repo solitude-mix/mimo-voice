@@ -6,11 +6,13 @@ if [ ! -f "$PID_FILE" ]; then
   echo "pid file not found: $(pwd)/$PID_FILE"
   exit 1
 fi
-PID=$(cat "$PID_FILE")
-if kill "$PID" 2>/dev/null; then
+PID=$(cat "$PID_FILE" || true)
+if [ -n "${PID:-}" ] && kill -0 "$PID" 2>/dev/null; then
+  kill "$PID"
   rm -f "$PID_FILE"
   echo "stopped pid=$PID"
-else
-  echo "failed to stop pid=$PID"
-  exit 1
+  exit 0
 fi
+rm -f "$PID_FILE"
+echo "removed stale pid file: ${PID:-unknown}"
+exit 0

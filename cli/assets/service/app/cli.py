@@ -8,10 +8,10 @@ import tempfile
 import urllib.error
 import urllib.request
 
-from .config import get_settings
-from .errors import DependencyError, ProviderError, ValidationError
-from .response_utils import error_payload, ok_payload
-from .service import VoiceService
+from .core.config import get_settings
+from .core.errors import DependencyError, ProviderError, ValidationError
+from .core.response_utils import error_payload, ok_payload
+from .core.service import VoiceService
 
 
 def build_parser() -> argparse.ArgumentParser:

@@ -11,6 +11,7 @@
       "serviceBaseUrl": { "type": "string", "default": "http://127.0.0.1:8091" },
       "serviceDir": { "type": "string" },
       "defaultChatId": { "type": "string" },
+      "defaultChannel": { "type": "string", "default": "telegram" },
       "preferCli": { "type": "boolean", "default": false }
     }
   },
@@ -19,6 +20,7 @@
     "serviceBaseUrl": { "label": "Service Base URL", "placeholder": "http://127.0.0.1:8091" },
     "serviceDir": { "label": "Service Directory", "placeholder": "/path/to/projects/mimo-voice/service" },
     "defaultChatId": { "label": "Default Telegram Chat ID" },
+    "defaultChannel": { "label": "Default Delivery Channel", "placeholder": "telegram" },
     "preferCli": { "label": "Prefer local CLI over HTTP" }
   }
 }
