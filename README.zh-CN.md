@@ -39,6 +39,15 @@ MIMO_PROVIDER_SOURCE=mini-vico
 
 时，才需要这个文件。
 
+### `MIMO_PROVIDER_SOURCE` 是什么意思？
+
+它表示：**MiMo Voice 要从哪里读取模型配置**。
+
+当前就两个值：
+
+- `direct`：直接从 `~/.openclaw/.env` 读取 `MIMO_API_URL`、`MIMO_MODEL`、`MIMO_API_KEY` 等配置
+- `mini-vico`：从 `mini-vico.json` 里读取模型配置
+
 ---
 
 ## 最短路径：直接照着做

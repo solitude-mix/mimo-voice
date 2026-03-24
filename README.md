@@ -35,6 +35,15 @@ Only needed if you use:
 MIMO_PROVIDER_SOURCE=mini-vico
 ```
 
+### What does `MIMO_PROVIDER_SOURCE` mean?
+
+It tells MiMo Voice **where to read model/provider configuration from**.
+
+Today there are only two values:
+
+- `direct`: read `MIMO_API_URL`, `MIMO_MODEL`, `MIMO_API_KEY`, etc. directly from `~/.openclaw/.env`
+- `mini-vico`: read model/provider settings from `mini-vico.json`
+
 ---
 
 ## Shortest path: just follow these steps
