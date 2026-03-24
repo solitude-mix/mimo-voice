@@ -112,12 +112,12 @@ brew install ffmpeg
 
 Current recommended package version:
 
-- `mimo-voice-openclaw-cli@0.1.0-alpha.4`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.5`
 
 Global install:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.5
 ```
 
 Then run:
@@ -346,7 +346,7 @@ If this is your first time here, read in this order:
 
 ## Current recommended version
 
-- `mimo-voice-openclaw-cli@0.1.0-alpha.4`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.5`
 
 ---
 

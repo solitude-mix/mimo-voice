@@ -3,7 +3,7 @@
 [中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
 
 Recommended version:
-- `mimo-voice-openclaw-cli@0.1.0-alpha.4`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.5`
 
 This file is for people who want to try the current alpha release.
 
@@ -24,7 +24,7 @@ The current alpha covers:
 The most reliable path is to install the CLI globally first:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.5
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 mimo-voice-openclaw configure
@@ -67,5 +67,5 @@ If something fails, these outputs are useful:
 These are useful for maintainers, not typical end users:
 - `docs/release-privacy-checklist.md`
 - `ARCHITECTURE_PLAN.zh-CN.md`
-- `RELEASE_ALPHA_0.1.0-alpha.4.md`
-- `GITHUB_RELEASE_0.1.0-alpha.4.md`
+- `RELEASE_ALPHA_0.1.0-alpha.5.md`
+- `GITHUB_RELEASE_0.1.0-alpha.5.md`

@@ -111,12 +111,12 @@ brew install ffmpeg
 
 当前推荐版本：
 
-- `mimo-voice-openclaw-cli@0.1.0-alpha.4`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.5`
 
 全局安装：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.5
 ```
 
 然后执行：
@@ -346,7 +346,7 @@ OpenClaw 插件，负责：
 
 ## 当前推荐版本
 
-- `mimo-voice-openclaw-cli@0.1.0-alpha.4`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.5`
 
 ---
 

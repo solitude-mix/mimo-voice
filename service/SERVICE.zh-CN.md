@@ -59,7 +59,7 @@ TELEGRAM_API_BASE=https://api.telegram.org
 ```env
 # MIMO_PROVIDER_SOURCE=mini-vico
 # MIMO_PROVIDER_PROFILE=default
-# MINI_VICO_CONFIG_PATH=/path/to/mini-vico/config.yaml
+# MINI_VICO_CONFIG_PATH=/path/to/mini-vico/config.json
 ```
 
 当前 alpha 代码会从进程环境变量或 `~/.openclaw/.env` 读取这些值。

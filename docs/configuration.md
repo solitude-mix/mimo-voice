@@ -304,7 +304,7 @@ provider:
   source: mini-vico
   mini_vico:
     profile: default
-    config_path: /path/to/mini-vico/config.yaml
+    config_path: /path/to/mini-vico/config.json
 ```
 
 ### What is implemented today
@@ -386,5 +386,8 @@ If those six are unclear, no installer or plugin doc will make the project feel 
 - `../service/SERVICE.md`
 - `../plugin/PLUGIN.md`
 integration.md`
+- `../service/SERVICE.md`
+- `../plugin/PLUGIN.md`
+md`
 - `../service/SERVICE.md`
 - `../plugin/PLUGIN.md`

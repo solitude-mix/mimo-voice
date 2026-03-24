@@ -61,7 +61,7 @@ Planned source-skeleton environment variables (recognized as skeleton only, not 
 ```env
 # MIMO_PROVIDER_SOURCE=mini-vico
 # MIMO_PROVIDER_PROFILE=default
-# MINI_VICO_CONFIG_PATH=/path/to/mini-vico/config.yaml
+# MINI_VICO_CONFIG_PATH=/path/to/mini-vico/config.json
 ```
 
 Current alpha code reads these values from process env or `~/.openclaw/.env`.

@@ -14,7 +14,7 @@
 
 当前版本：
 
-- `0.1.0-alpha.4`
+- `0.1.0-alpha.5`
 
 ---
 
@@ -110,7 +110,7 @@ brew install ffmpeg
 目前最稳的方式是全局安装：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.5
 ```
 
 安装后，你就可以直接运行：
@@ -287,13 +287,13 @@ http://127.0.0.1:8000/v1
 所以这类写法在部分机器上可能失败：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.4 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.5 doctor
 ```
 
 如果你要稳定、可复现的体验，优先使用全局安装：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.5
 ```
 
 ---

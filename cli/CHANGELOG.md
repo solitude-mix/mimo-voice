@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.5
+
+- sync packaged service/plugin assets with the current repo state
+- add provider source support and minimal mini-vico adapter
+- expand doctor with provider source, mini-vico content, connectivity, and service runtime diagnostics
+- refine docs, privacy checks, and user/maintainer document boundaries
+
 ## 0.1.0-alpha.4
 
 Doctor and CLI usage polish release.
