@@ -78,12 +78,19 @@ python3 -m pip install -r requirements.txt
 默认地址：
 - `http://127.0.0.1:8091`
 
-后台启动：
+后台启动 / 查看状态 / 停止：
 
 ```bash
 bash scripts/start-bg.sh
 bash scripts/status.sh
+bash scripts/stop-bg.sh
 ```
+
+runtime 行为说明：
+- `start-bg.sh` 在启动前会自动清理 stale pid 文件
+- 如果服务已经在运行，`start-bg.sh` 会直接退出，不会重复启动
+- `stop-bg.sh` 遇到 stale pid 时会自动清理，而不是直接硬失败
+- runtime 日志路径：`service/.runtime/service.log`
 
 ## API 示例
 

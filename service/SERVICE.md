@@ -80,6 +80,20 @@ python3 -m pip install -r requirements.txt
 Default address:
 - `http://127.0.0.1:8091`
 
+Background start / status / stop:
+
+```bash
+bash scripts/start-bg.sh
+bash scripts/status.sh
+bash scripts/stop-bg.sh
+```
+
+Runtime behavior notes:
+- `start-bg.sh` removes a stale pid file automatically before starting
+- `start-bg.sh` exits early if the service is already running
+- `stop-bg.sh` removes a stale pid file instead of failing hard
+- runtime log path: `service/.runtime/service.log`
+
 ## API examples
 
 ### Health check
