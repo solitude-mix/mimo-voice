@@ -4,20 +4,22 @@
 
 `cli/` is the MiMo Voice install and maintenance CLI.
 
-If you have not installed the CLI globally, start with:
+## Current version
+
+- `0.1.0-alpha.4`
+
+## Recommended usage
+
+The most reliable path is:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
+mimo-voice-openclaw doctor
+mimo-voice-openclaw install
+mimo-voice-openclaw configure
 ```
 
-Only after running:
-
-```bash
-npm install -g mimo-voice-openclaw-cli
-```
-
-can you use these commands directly:
+After global install you can use these commands directly:
 
 ```bash
 mimo-voice-openclaw doctor
@@ -27,6 +29,19 @@ mimo-voice-openclaw uninstall
 mimo-voice-openclaw upgrade
 ```
 
+## About one-shot `npx`
+
+Some npm / npx versions do not reliably expose the package bin for this CLI during one-shot remote execution.
+Because of that, global install is the recommended path for normal use.
+
+For local development, running the source checkout directly is also fine:
+
+```bash
+node src/index.js doctor
+node src/index.js install
+node src/index.js configure
+```
+
 ## Typical use cases
 
 - check local prerequisites
@@ -34,28 +49,10 @@ mimo-voice-openclaw upgrade
 - write common plugin settings
 - uninstall or redeploy the alpha version
 
-## Current version
-
-- `0.1.0-alpha.2`
-
-## Recommended order
-
-```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure
-```
-
-Then verify:
-
-```bash
-openclaw plugins info mimo-voice-openclaw
-openclaw mimo-voice status
-```
-
 ## Notes
 
 - In WSL, use `python3`
 - Restart the gateway after installation when needed
+- `doctor` tolerates a missing `service/.venv` when `service_health` is already OK
 - `upgrade` currently behaves like a refresh install
 - `uninstall` keeps the Python service directory and venv by default to avoid accidental data loss

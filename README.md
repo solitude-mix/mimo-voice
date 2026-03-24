@@ -42,29 +42,18 @@ macOS (Homebrew):
 brew install ffmpeg
 ```
 
-> Note: having `python3` alone is not enough.
-> The install flow creates a virtual environment and then runs `python -m pip ...` inside it.
-> If the system is missing a complete `venv/ensurepip` setup, `.venv` may be created successfully but still not contain a working `pip`.
-
-### 2. Check your environment
+### 2. Install the CLI globally
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
 ```
 
-`doctor` now also checks:
-- whether `python3 -m venv` is available
-- whether `python3 -m ensurepip` is available
-- whether an existing `.venv` already has a working `pip`
-
-### 3. Install
+### 3. Run doctor and install
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+mimo-voice-openclaw doctor
+mimo-voice-openclaw install
 ```
-
-If an existing `.venv` is found but it does not contain `pip`, the installer now tries to remove and recreate it once.
-If the recreated environment still has no `pip`, the problem is usually a missing system package such as `python3-venv` or `python3.12-venv`.
 
 ### 4. Verify
 
@@ -73,79 +62,15 @@ openclaw plugins info mimo-voice-openclaw
 openclaw mimo-voice status
 ```
 
-If commands do not appear immediately after installation, restart the gateway and try again.
+## Current alpha notes
 
-## FAQ
+- `doctor` checks `python3 -m ensurepip` and pip availability inside an existing `.venv`
+- `install` can repair an existing broken `.venv` that is missing `pip`
+- if `service_health` is already OK, a missing `service/.venv` is tolerated instead of making the whole doctor run fail
+- global install is the recommended path for normal use
+- one-shot `npx` execution may fail on some npm / npx versions even when the package is published correctly
 
-### Do I need to install ffmpeg myself?
-Yes.
-
-This project depends on `ffmpeg` for audio conversion. Install it first, then run `doctor`.
-
-### Can I use it without global installation?
-Yes.
-
-Use:
-
-```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
-```
-
-### When can I use `mimo-voice-openclaw ...` directly?
-Only after installing the CLI globally:
-
-```bash
-npm install -g mimo-voice-openclaw-cli
-```
-
-### Why does `doctor` fail on `service_health` the first time?
-Usually because the service is not running yet.
-Run `install` first, then run `doctor` again.
-
-### Why does `install` fail with `No module named pip`?
-This usually means the current machine does not have a complete Python virtual-environment setup, or that an old `.venv` is broken.
-
-Typical error:
-
-```bash
-/home/xxx/.venv/bin/python3: No module named pip
-```
-
-Recommended fix:
-
-1. Install the system packages first (Ubuntu / WSL):
-
-```bash
-sudo apt update
-sudo apt install -y python3-venv
-```
-
-If your system uses Python 3.12, also run:
-
-```bash
-sudo apt install -y python3.12-venv
-```
-
-2. Remove the old virtual environment:
-
-```bash
-rm -rf /home/zhouts/.openclaw/mimo-voice-openclaw/service/.venv
-```
-
-3. Run install again:
-
-```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
-```
-
-The reason is that the install flow reuses an existing `.venv` when it finds one.
-If that `.venv` is missing `pip`, the later install steps fail.
-
-### Why should I restart the gateway?
-After plugin installation, OpenClaw may need a restart before commands appear consistently.
-
-## What is included
+## Repository contents
 
 This repository contains three parts:
 
@@ -179,8 +104,9 @@ cli/       Installer CLI
 
 - [Alpha notes](./ALPHA_NOTES.md)
 - [发布说明（中文）](./ALPHA_NOTES.zh-CN.md)
-- [Release steps](./RELEASE_ALPHA_0.1.0-alpha.2.md)
-- [发布步骤（中文）](./RELEASE_ALPHA_0.1.0-alpha.2.zh-CN.md)
+- [Release steps for alpha.4](./RELEASE_ALPHA_0.1.0-alpha.4.md)
+- [alpha.4 发布步骤](./RELEASE_ALPHA_0.1.0-alpha.4.zh-CN.md)
+- [GitHub release draft for alpha.4](./GITHUB_RELEASE_0.1.0-alpha.4.md)
 - [Service details](./service/SERVICE.md)
 - [Service 说明（中文）](./service/SERVICE.zh-CN.md)
 - [Plugin details](./plugin/PLUGIN.md)

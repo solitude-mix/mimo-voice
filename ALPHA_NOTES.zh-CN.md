@@ -3,7 +3,7 @@
 [中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
 
 当前推荐版本：
-- `mimo-voice-openclaw-cli@0.1.0-alpha.2`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.4`
 
 这份说明面向想试用当前 alpha 版本的用户。
 
@@ -21,12 +21,13 @@
 
 ## 推荐流程
 
-如果你还没有全局安装 CLI，直接使用：
+目前最稳的方式，是先全局安装 CLI：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
+mimo-voice-openclaw doctor
+mimo-voice-openclaw install
+mimo-voice-openclaw configure
 ```
 
 然后验证：
@@ -38,8 +39,11 @@ openclaw mimo-voice status
 
 如果安装后命令没有立即出现，建议先重启 gateway 再验证。
 
-## 当前限制
+## 当前 alpha 说明
 
+- 当 `service_health` 已经正常时，`doctor` 会容忍缺失的 `service/.venv`
+- 某些 npm / npx 版本在一次性远程执行时，可能不会稳定暴露 CLI 的 bin 命令
+- 因此当前推荐使用全局安装路径
 - `upgrade` 目前更像刷新安装，而不是差异升级
 - `uninstall` 默认会保留 Python service 目录和虚拟环境
 - `configure` 会改写 JSON 格式
@@ -54,6 +58,6 @@ openclaw mimo-voice status
 ## 反馈问题时建议附带
 
 如果你遇到问题，建议附上这些输出：
-- `npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor`
+- `mimo-voice-openclaw doctor`
 - `openclaw plugins info mimo-voice-openclaw`
 - 是否执行过 gateway 重启

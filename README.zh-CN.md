@@ -42,29 +42,18 @@ macOS（Homebrew）：
 brew install ffmpeg
 ```
 
-> 注意：仅仅安装 `python3` 还不够。
-> 这个项目的安装流程会创建虚拟环境并在其中执行 `python -m pip ...`。
-> 如果系统缺少完整的 `venv/ensurepip` 组件，`.venv` 可能会创建成功，但里面没有可用的 `pip`。
-
-### 2. 检查环境
+### 2. 全局安装 CLI
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
 ```
 
-`doctor` 现在会额外检查：
-- `python3 -m venv` 是否可用
-- `python3 -m ensurepip` 是否可用
-- 如果 `.venv` 已存在，里面的 `pip` 是否可用
-
-### 3. 安装
+### 3. 执行 doctor 和 install
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+mimo-voice-openclaw doctor
+mimo-voice-openclaw install
 ```
-
-如果发现已有 `.venv` 但其中缺少 `pip`，安装器会尝试自动删除并重建一次。
-如果重建后仍然没有 `pip`，通常说明系统层面的 `python3-venv` / `python3.12-venv` 没装完整。
 
 ### 4. 验证
 
@@ -73,77 +62,13 @@ openclaw plugins info mimo-voice-openclaw
 openclaw mimo-voice status
 ```
 
-如果安装后命令没有立即出现，建议先重启 gateway 再验证。
+## 当前 alpha 说明
 
-## 常见问题
-
-### 需要自己安装 ffmpeg 吗？
-需要。
-
-这个项目依赖 `ffmpeg` 做音频转换，所以请先安装，再运行 `doctor`。
-
-### 不全局安装也能用吗？
-可以。
-
-直接使用：
-
-```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
-```
-
-### 什么时候才能直接用 `mimo-voice-openclaw ...`？
-只有在你全局安装 CLI 之后：
-
-```bash
-npm install -g mimo-voice-openclaw-cli
-```
-
-### 为什么第一次 `doctor` 可能会报 `service_health` 失败？
-通常是因为服务还没启动。
-先运行 `install`，再运行一次 `doctor` 就行。
-
-### 为什么 `install` 会报 `No module named pip`？
-这通常说明当前机器上的 Python 虚拟环境不完整，或者历史残留的 `.venv` 已损坏。
-
-典型报错：
-
-```bash
-/home/xxx/.venv/bin/python3: No module named pip
-```
-
-处理步骤：
-
-1. 安装系统依赖（Ubuntu / WSL）：
-
-```bash
-sudo apt update
-sudo apt install -y python3-venv
-```
-
-如果你的系统使用 Python 3.12，再执行：
-
-```bash
-sudo apt install -y python3.12-venv
-```
-
-2. 删除旧的虚拟环境：
-
-```bash
-rm -rf /home/zhouts/.openclaw/mimo-voice-openclaw/service/.venv
-```
-
-3. 重新执行安装：
-
-```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
-```
-
-原因是当前安装流程在发现 `.venv` 已存在时会优先复用；
-如果这个 `.venv` 本身缺少 `pip`，后续安装就会失败。
-
-### 为什么建议重启 gateway？
-插件安装后，OpenClaw 有时需要重启一次，命令显示才会更稳定。
+- `doctor` 会检查 `python3 -m ensurepip` 以及已存在 `.venv` 里的 pip 可用性
+- `install` 可以自动修复缺少 `pip` 的旧 `.venv`
+- 如果 `service_health` 已经正常，缺失的 `service/.venv` 不会再导致整个 doctor 失败
+- 当前普通使用场景下，更推荐全局安装路径
+- 某些 npm / npx 版本下一次性 `npx` 执行可能失败，即使包本身已正确发布
 
 ## 仓库包含什么
 
@@ -179,8 +104,9 @@ cli/       Installer CLI
 
 - [Alpha 版本说明](./ALPHA_NOTES.zh-CN.md)
 - [Alpha notes](./ALPHA_NOTES.md)
-- [发布步骤](./RELEASE_ALPHA_0.1.0-alpha.2.zh-CN.md)
-- [Release steps](./RELEASE_ALPHA_0.1.0-alpha.2.md)
+- [alpha.4 发布步骤](./RELEASE_ALPHA_0.1.0-alpha.4.zh-CN.md)
+- [Release steps for alpha.4](./RELEASE_ALPHA_0.1.0-alpha.4.md)
+- [alpha.4 GitHub Release 草稿](./GITHUB_RELEASE_0.1.0-alpha.4.md)
 - [Service 说明](./service/SERVICE.zh-CN.md)
 - [Service details](./service/SERVICE.md)
 - [Plugin 说明](./plugin/PLUGIN.zh-CN.md)
