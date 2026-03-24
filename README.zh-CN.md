@@ -355,6 +355,7 @@ OpenClaw 插件，负责：
 - [CLI install guide (English)](./cli/README.md)
 - [Service 说明](./service/SERVICE.zh-CN.md)
 - [Plugin 说明](./plugin/PLUGIN.zh-CN.md)
+- [架构方案（中文草案）](./ARCHITECTURE_PLAN.zh-CN.md)
 - [Alpha 版本说明](./ALPHA_NOTES.zh-CN.md)
 - [alpha.4 发布步骤](./RELEASE_ALPHA_0.1.0-alpha.4.zh-CN.md)
 - [alpha.4 GitHub Release 草稿](./GITHUB_RELEASE_0.1.0-alpha.4.md)

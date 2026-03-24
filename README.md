@@ -355,6 +355,7 @@ If this is your first time here, read in this order:
 - [CLI 安装与使用说明（中文）](./cli/README.zh-CN.md)
 - [Service details](./service/SERVICE.md)
 - [Plugin details](./plugin/PLUGIN.md)
+- [Architecture plan (Chinese draft)](./ARCHITECTURE_PLAN.zh-CN.md)
 - [Alpha notes](./ALPHA_NOTES.md)
 - [Release steps for alpha.4](./RELEASE_ALPHA_0.1.0-alpha.4.md)
 - [GitHub release draft for alpha.4](./GITHUB_RELEASE_0.1.0-alpha.4.md)
