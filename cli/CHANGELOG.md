@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.6
+
+- include post-alpha.5 follow-up fixes and doc cleanup
+- clean duplicated README lines after release
+- refine mini-vico/source diagnostics and final doc wording
+
 ## 0.1.0-alpha.5
 
 - sync packaged service/plugin assets with the current repo state

@@ -77,7 +77,7 @@ A practical current path looks like this:
 ### Step 1: install the CLI
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.5
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.6
 ```
 
 ### Step 2: check prerequisites

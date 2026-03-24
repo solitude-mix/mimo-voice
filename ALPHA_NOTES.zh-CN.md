@@ -3,7 +3,7 @@
 [中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
 
 当前推荐版本：
-- `mimo-voice-openclaw-cli@0.1.0-alpha.5`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.6`
 
 这份说明面向想试用当前 alpha 版本的用户。
 
@@ -24,7 +24,7 @@
 目前最稳的方式，是先全局安装 CLI：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.5
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.6
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 mimo-voice-openclaw configure
@@ -67,5 +67,5 @@ openclaw mimo-voice status
 这些更适合维护者，而不是普通用户：
 - `docs/release-privacy-checklist.md`
 - `ARCHITECTURE_PLAN.zh-CN.md`
-- `RELEASE_ALPHA_0.1.0-alpha.5.md`
-- `GITHUB_RELEASE_0.1.0-alpha.5.md`
+- `RELEASE_ALPHA_0.1.0-alpha.6.md`
+- `GITHUB_RELEASE_0.1.0-alpha.6.md`
