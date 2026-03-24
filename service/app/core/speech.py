@@ -37,7 +37,7 @@ class SpeechOrchestrator:
         audio = b"".join(audio_parts)
         saved_path = None
         if save_file:
-            out_path = build_output_path(self.settings.raw_tts_dir, "mimo_tts", text, "wav")
+            out_path = build_output_path(self.settings.audio.raw_tts_dir, "mimo_tts", text, "wav")
             out_path.write_bytes(audio)
             saved_path = str(out_path)
             logger.info("SpeechOrchestrator saved raw wav path=%s", saved_path)

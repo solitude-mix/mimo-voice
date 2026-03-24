@@ -104,7 +104,7 @@ class TelegramVoiceDelivery:
 
             local_file = None
             if keep_file:
-                final_ogg = build_output_path(self.settings.audio_keep_dir, "telegram_mimo", final_text, "ogg")
+                final_ogg = build_output_path(self.settings.audio.audio_keep_dir, "telegram_mimo", final_text, "ogg")
                 final_ogg.write_bytes(ogg_path.read_bytes())
                 local_file = str(final_ogg)
                 logger.info("TelegramVoiceDelivery kept file path=%s", local_file)
