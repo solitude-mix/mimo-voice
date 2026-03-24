@@ -230,6 +230,8 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token
         "config": {
           "serviceBaseUrl": "http://127.0.0.1:8091",
           "serviceDir": "/path/to/projects/mimo-voice/service",
+          "defaultChatId": "123456789",
+          "defaultChannel": "telegram",
           "preferCli": false
         }
       }

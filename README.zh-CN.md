@@ -353,6 +353,7 @@ OpenClaw 插件，负责：
 
 - [CLI 安装与使用说明（中文）](./cli/README.zh-CN.md)
 - [CLI install guide (English)](./cli/README.md)
+- [快速开始（英文）](./docs/quickstart.md)
 - [配置说明（英文）](./docs/configuration.md)
 - [OpenClaw 接入说明（英文）](./docs/openclaw-integration.md)
 - [示例配置](./examples/config.example.yaml)

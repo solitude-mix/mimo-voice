@@ -403,7 +403,10 @@ mimo-voice-openclaw install
 
 如果你已经把 CLI 跑起来了，推荐继续看：
 
+- [快速开始（英文）](../docs/quickstart.md)
 - [项目总览 README（中文）](../README.zh-CN.md)
+- [配置说明（英文）](../docs/configuration.md)
+- [OpenClaw 接入说明（英文）](../docs/openclaw-integration.md)
 - [Service 说明](../service/SERVICE.zh-CN.md)
 - [Plugin 说明](../plugin/PLUGIN.zh-CN.md)
 - [Alpha 版本说明](../ALPHA_NOTES.zh-CN.md)

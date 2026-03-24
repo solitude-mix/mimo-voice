@@ -403,7 +403,10 @@ Currently refreshes the installation by running the install flow again.
 
 Once the CLI path is running, continue with:
 
+- [Quick start](../docs/quickstart.md)
 - [Project overview README](../README.md)
+- [Configuration guide](../docs/configuration.md)
+- [OpenClaw integration guide](../docs/openclaw-integration.md)
 - [Service details](../service/SERVICE.md)
 - [Plugin details](../plugin/PLUGIN.md)
 - [Alpha notes](../ALPHA_NOTES.md)

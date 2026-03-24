@@ -204,13 +204,20 @@ It should not:
 
 ## 8. Recommended future API direction
 
-Today, the documented plugin features include methods such as:
+Today, the plugin already exposes both generic and compatibility methods.
+
+Recommended methods:
 
 - `mimoVoice.status`
+- `mimoVoice.generateSpeech`
+- `mimoVoice.deliverVoice`
+
+Compatibility methods still available:
+
 - `mimoVoice.tts`
 - `mimoVoice.sendTelegramVoice`
 
-That is acceptable for the first alpha stage, but it is not ideal for long-term expansion.
+This is much better than the earliest alpha shape, but the long-term direction still matters.
 
 ### Better long-term shape
 
