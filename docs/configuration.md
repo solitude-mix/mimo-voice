@@ -41,6 +41,7 @@ Provider config answers:
 - how do we authenticate?
 - which model do we call?
 - which default voice do we use?
+- where do these provider settings come from?
 
 Example:
 
@@ -59,7 +60,7 @@ provider:
 ### Common fields
 
 - `kind`: provider type, such as `mimo`
-- `source`: where provider settings come from, such as `direct` or future `mini-vico`
+- `source`: where provider settings come from, such as `direct` or planned `mini-vico`
 - `base_url`: TTS API base URL
 - `api_key`: API credential if required
 - `model`: exact model name exposed by the backend
@@ -215,6 +216,8 @@ That works, but it is not yet the clean final model.
 #### Service `.env` example
 
 ```env
+MIMO_PROVIDER_KIND=mimo
+MIMO_PROVIDER_SOURCE=direct
 MIMO_API_KEY=your_mimo_api_key
 MIMO_API_URL=https://api.xiaomimimo.com/v1/chat/completions
 MIMO_MODEL=mimo-v2-tts
@@ -228,11 +231,21 @@ TELEGRAM_API_BASE=https://api.telegram.org
 
 ##### Provider-side env vars
 
+- `MIMO_PROVIDER_KIND`: current provider kind
+- `MIMO_PROVIDER_SOURCE`: current provider source, today `direct`
 - `MIMO_API_KEY`: required provider credential
 - `MIMO_API_URL`: provider endpoint override
 - `MIMO_MODEL`: provider model override
 - `MIMO_DEFAULT_VOICE`: provider default voice override
 - `MIMO_AUDIO_FORMAT`: provider output format override
+
+##### Planned source-skeleton env vars
+
+- `MIMO_PROVIDER_SOURCE=mini-vico`
+- `MIMO_PROVIDER_PROFILE`
+- `MINI_VICO_CONFIG_PATH`
+
+These planned source settings exist as a skeleton only. The actual mini-vico source adapter is not implemented yet.
 
 ##### Channel-side env vars
 
@@ -294,7 +307,15 @@ provider:
     config_path: /path/to/mini-vico/config.yaml
 ```
 
-Then MiMo Voice would resolve that source into normalized provider fields such as:
+### What is implemented today
+
+- `source=direct` works
+- `source=mini-vico` is recognized as a planned source skeleton
+- choosing `source=mini-vico` currently raises an explicit configuration error instead of silently pretending to work
+
+This is intentional. It keeps the config boundary stable while making it obvious that the source adapter itself is still pending.
+
+When implemented, MiMo Voice should resolve that source into normalized provider fields such as:
 
 - `base_url`
 - `api_key`

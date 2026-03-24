@@ -6,11 +6,11 @@
 
 provider:
   # Which TTS provider implementation to use.
-  # Current practical direction: mimo / mini-vico style provider config.
   kind: mimo
 
   # How provider config is sourced.
-  # supported design targets: direct | env | mini-vico
+  # Current practical source: direct
+  # Planned source skeleton: mini-vico
   source: direct
 
   # Direct provider settings.
@@ -23,7 +23,7 @@ provider:
   extra:
     style: calm
 
-  # Example for future mini-vico config reuse.
+  # Future mini-vico config-source skeleton.
   # source: mini-vico
   # mini_vico:
   #   profile: default
@@ -40,13 +40,6 @@ channel:
   telegram:
     bot_token: 123456:replace_me
     default_chat_id: 123456789
-
-  # Future channel examples.
-  # feishu:
-  #   app_id: your_app_id
-  #   app_secret: your_app_secret
-  # wechat:
-  #   endpoint: https://example.com/wechat
 
 integration:
   openclaw:

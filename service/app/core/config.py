@@ -36,12 +36,20 @@ def load_env_value_or_default(name: str, default: str) -> str:
 
 
 @dataclass(frozen=True)
+class MiniVicoSourceSettings:
+    profile: str = field(default_factory=lambda: load_env_value_or_default("MIMO_PROVIDER_PROFILE", "default"))
+    config_path: Optional[str] = field(default_factory=lambda: load_env_value("MINI_VICO_CONFIG_PATH"))
+
+
+@dataclass(frozen=True)
 class ProviderSettings:
-    kind: str = "mimo"
+    kind: str = field(default_factory=lambda: load_env_value_or_default("MIMO_PROVIDER_KIND", "mimo"))
+    source: str = field(default_factory=lambda: load_env_value_or_default("MIMO_PROVIDER_SOURCE", "direct"))
     base_url: str = field(default_factory=lambda: load_env_value_or_default("MIMO_API_URL", "https://api.xiaomimimo.com/v1/chat/completions"))
     model: str = field(default_factory=lambda: load_env_value_or_default("MIMO_MODEL", "mimo-v2-tts"))
     default_voice: str = field(default_factory=lambda: load_env_value_or_default("MIMO_DEFAULT_VOICE", "default_zh"))
     audio_format: str = field(default_factory=lambda: load_env_value_or_default("MIMO_AUDIO_FORMAT", "wav"))
+    mini_vico: MiniVicoSourceSettings = field(default_factory=MiniVicoSourceSettings)
 
     @property
     def api_key(self) -> str:
@@ -49,6 +57,45 @@ class ProviderSettings:
         if not value:
             raise ConfigError("Missing MIMO_API_KEY. Set it in env or ~/.openclaw/.env")
         return value
+
+
+@dataclass(frozen=True)
+class ResolvedProviderSettings:
+    kind: str
+    source: str
+    base_url: str
+    model: str
+    default_voice: str
+    audio_format: str
+    api_key: str
+
+
+def resolve_provider_settings(provider: ProviderSettings) -> ResolvedProviderSettings:
+    source = (provider.source or "direct").strip().lower()
+    if source == "direct":
+        return ResolvedProviderSettings(
+            kind=provider.kind,
+            source=source,
+            base_url=provider.base_url,
+            model=provider.model,
+            default_voice=provider.default_voice,
+            audio_format=provider.audio_format,
+            api_key=provider.api_key,
+        )
+
+    if source in {"mini-vico", "mini_vico"}:
+        profile = provider.mini_vico.profile
+        config_path = provider.mini_vico.config_path or "<unspecified>"
+        raise ConfigError(
+            f"Provider source '{source}' is not implemented yet. "
+            f"Planned mini-vico source profile={profile} config_path={config_path}. "
+            "For now, use MIMO_PROVIDER_SOURCE=direct with explicit provider env vars."
+        )
+
+    raise ConfigError(
+        f"Unsupported provider source: {provider.source}. "
+        "Supported sources today: direct. Planned: mini-vico."
+    )
 
 
 @dataclass(frozen=True)
@@ -87,26 +134,30 @@ class Settings:
     audio: AudioSettings = field(default_factory=AudioSettings)
     runtime: RuntimeSettings = field(default_factory=RuntimeSettings)
 
+    @property
+    def resolved_provider(self) -> ResolvedProviderSettings:
+        return resolve_provider_settings(self.provider)
+
     # Compatibility accessors for current alpha code.
     @property
     def mimo_api_url(self) -> str:
-        return self.provider.base_url
+        return self.resolved_provider.base_url
 
     @property
     def mimo_model(self) -> str:
-        return self.provider.model
+        return self.resolved_provider.model
 
     @property
     def mimo_default_voice(self) -> str:
-        return self.provider.default_voice
+        return self.resolved_provider.default_voice
 
     @property
     def mimo_audio_format(self) -> str:
-        return self.provider.audio_format
+        return self.resolved_provider.audio_format
 
     @property
     def mimo_api_key(self) -> str:
-        return self.provider.api_key
+        return self.resolved_provider.api_key
 
     @property
     def telegram_api_base(self) -> str:
