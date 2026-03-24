@@ -8,6 +8,9 @@
 
 MiMo Voice 是一个面向 OpenClaw 生态的语音发送项目。
 
+**当前这个项目支持的是小米平台的 `MiMo-V2-TTS` 模型能力。**
+如果后续增加新的模型适配，也会继续围绕**小米平台**扩展，而不是把项目做成一个面向所有厂商的通用 TTS 聚合层。
+
 它的目标不是只做一个“文本转语音脚本”，而是把下面几件事串起来：
 
 - 读取语音模型配置
@@ -33,7 +36,7 @@ MiMo Voice 是一个面向 OpenClaw 生态的语音发送项目。
 
 - 你已经在使用 **OpenClaw**
 - 你想让 OpenClaw 在 **Telegram** 里直接发送语音
-- 你已经有可用的 **TTS 模型 / API**
+- 你已经有可用的 **小米 MiMo-V2-TTS 模型 / API**
 - 你希望把“模型调用”和“渠道发送”整合成一个可复用能力
 
 如果你只是想单独测试某个 TTS 模型是否能出音频，这个仓库也能参考；但它的长期目标不是停留在单脚本，而是成为一个可以接入 OpenClaw 的语音发送组件。
@@ -128,14 +131,50 @@ mimo-voice-openclaw install
 
 ---
 
-### 第 4 步：把 OpenClaw 接上服务
+### 第 4 步：先明确你要改哪些配置文件
+
+如果你是第一次安装，至少要知道这几个地方：
+
+1. **`~/.openclaw/.env`**
+   - 填模型和 Telegram 相关配置
+   - 至少会涉及：
+     - `MIMO_PROVIDER_SOURCE`
+     - `MIMO_API_KEY`（或 mini-vico 配置里的 `api_key`）
+     - `TELEGRAM_BOT_TOKEN`
+
+2. **mini-vico 配置文件**（如果你用 `MIMO_PROVIDER_SOURCE=mini-vico`）
+   - 例如：`/home/zhoutiansheng/.openclaw/mini-vico.json`
+   - 里面至少要有：
+     - `base_url`
+     - `model`
+     - `voice`
+     - `api_key`（或者改用 `.env` 兜底）
+
+3. **OpenClaw 插件配置**
+   - 一般通过 `mimo-voice-openclaw configure` 写入
+   - 也就是告诉 OpenClaw：语音 service 在哪、默认渠道是什么、默认 chat id 是什么
+
+### 第 5 步：把 OpenClaw 接上 service
 
 最基础的配置命令示例：
 
 ```bash
 mimo-voice-openclaw configure \
   --service-base-url http://127.0.0.1:8091 \
-  --service-dir /path/to/service
+  --service-dir /absolute/path/to/mimo-voice/service \
+  --default-channel telegram
+```
+
+这里的 `--service-dir` 指的是：
+
+- **这个仓库里的 `service/` 目录绝对路径**
+- 不是 OpenClaw 自己的安装目录
+- 也不是随便新建一个叫 service 的目录
+
+例如，如果你的仓库就在当前工作区里，它通常类似：
+
+```bash
+/home/zhoutiansheng/.openclaw/workspace-main/projects/mimo-voice/service
 ```
 
 配置完成后，验证：
@@ -324,11 +363,20 @@ OpenClaw 插件，负责：
 - [CLI 说明（中文）](./cli/README.zh-CN.md)
 - [Service 说明（中文）](./service/SERVICE.zh-CN.md)
 
-### 4. 为什么现在 README 里没把模型配置讲透？
+### 4. 模型配置到底应该看哪里？
 
-因为这个项目目前还在 alpha 阶段，过去的文档更偏“发布和安装”，还没有完全升级成“新手产品文档”。
+如果你要配置模型，不要只盯 README 这一页，直接看这几份：
 
-这正是当前要补的重点之一。
+- [快速开始（英文）](./docs/quickstart.md)
+- [配置说明（英文）](./docs/configuration.md)
+- [Service 说明](./service/SERVICE.zh-CN.md)
+- `service/.env.example`
+
+优先顺序建议是：
+
+1. 先看 `docs/quickstart.md` 知道整体步骤
+2. 再看 `service/.env.example` 和 `service/SERVICE.zh-CN.md` 填 provider / Telegram 配置
+3. 如果你走 mini-vico source，再看 `docs/configuration.md` 和 `examples/mini-vico.example.json`
 
 ---
 
@@ -356,6 +404,35 @@ OpenClaw 插件，负责：
 
 - [CLI 安装与使用说明（中文）](./cli/README.zh-CN.md)
 - [CLI install guide (English)](./cli/README.md)
+- [快速开始（英文）](./docs/quickstart.md)
+- [配置说明（英文）](./docs/configuration.md)
+- [OpenClaw 接入说明（英文）](./docs/openclaw-integration.md)
+- [示例配置](./examples/config.example.yaml)
+- [Service 说明](./service/SERVICE.zh-CN.md)
+- [Plugin 说明](./plugin/PLUGIN.zh-CN.md)
+- [Alpha 版本说明](./ALPHA_NOTES.zh-CN.md)
+
+---
+
+## 给 alpha 用户的提醒
+
+当前这套文档已经开始朝“新手可用”方向重构，但项目本身仍处于 alpha 阶段。
+
+你可以把它理解成：
+
+- **安装路径已经在成型**
+- **OpenClaw 接入已经在成型**
+- **更合理的配置结构和多渠道架构还会继续演进**
+
+如果你正在评估这个项目，最现实的预期应该是：
+
+- 先跑通 Telegram + OpenClaw
+- 再逐步补模型配置规范
+- 再继续扩展更多发送渠道
+w
+- 再逐步补模型配置规范
+- 再继续扩展更多发送渠道
+l guide (English)](./cli/README.md)
 - [快速开始（英文）](./docs/quickstart.md)
 - [配置说明（英文）](./docs/configuration.md)
 - [OpenClaw 接入说明（英文）](./docs/openclaw-integration.md)

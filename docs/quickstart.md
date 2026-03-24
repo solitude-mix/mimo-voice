@@ -2,6 +2,8 @@
 
 This is the shortest practical path for getting MiMo Voice working with OpenClaw and Telegram.
 
+**Current model scope:** this project currently targets **Xiaomi MiMo-V2-TTS** on the Xiaomi platform. If more models are added later, they are still expected to stay within the Xiaomi platform family rather than becoming a generic multi-vendor TTS aggregator.
+
 If you are new, follow these steps in order.
 
 ---
@@ -15,7 +17,7 @@ You need all of these:
 - `python3`
 - `ffmpeg`
 - `node` / `npm`
-- a working TTS backend or API
+- access to Xiaomi MiMo-V2-TTS
 - a Telegram bot token
 - a Telegram chat id for testing
 
@@ -61,11 +63,29 @@ mimo-voice-openclaw install
 
 ---
 
-## 5. Set provider and Telegram credentials
+## 5. Know which files you actually need to edit
 
-Copy or adapt these values into your environment or `~/.openclaw/.env`:
+For a first-time setup, the important files are:
+
+1. **`~/.openclaw/.env`**
+   - provider source selection
+   - Xiaomi MiMo / mini-vico related credentials
+   - Telegram bot token
+
+2. **mini-vico config file** (only if you choose `MIMO_PROVIDER_SOURCE=mini-vico`)
+   - for example: `~/.openclaw/mini-vico.json`
+
+3. **OpenClaw plugin config**
+   - usually written through `mimo-voice-openclaw configure`
+
+---
+
+## 6. Set provider and Telegram credentials
+
+Copy or adapt these values into `~/.openclaw/.env`:
 
 ```env
+MIMO_PROVIDER_SOURCE=direct
 MIMO_API_KEY=your_mimo_api_key
 MIMO_API_URL=https://api.xiaomimimo.com/v1/chat/completions
 MIMO_MODEL=mimo-v2-tts
@@ -75,9 +95,19 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 TELEGRAM_API_BASE=https://api.telegram.org
 ```
 
+If you want to use the mini-vico source adapter instead:
+
+```env
+MIMO_PROVIDER_SOURCE=mini-vico
+MIMO_PROVIDER_PROFILE=default
+MINI_VICO_CONFIG_PATH=/home/zhoutiansheng/.openclaw/mini-vico.json
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+```
+
 See:
 
 - `../service/.env.example`
+- `../examples/mini-vico.example.json`
 
 Important:
 
@@ -87,14 +117,30 @@ Important:
 
 ---
 
-## 6. Write OpenClaw plugin config
+## 7. Write OpenClaw plugin config
 
 Basic configure flow:
 
 ```bash
 mimo-voice-openclaw configure \
   --service-base-url http://127.0.0.1:8091 \
-  --service-dir /path/to/projects/mimo-voice/service
+  --service-dir /absolute/path/to/mimo-voice/service \
+  --default-channel telegram
+```
+
+What `--service-dir` means:
+
+- it is the absolute path to this repository's `service/` directory
+- it is not the OpenClaw installation directory
+- it is not an arbitrary new folder named `service`
+
+Example:
+
+```bash
+mimo-voice-openclaw configure \
+  --service-base-url http://127.0.0.1:8091 \
+  --service-dir /home/zhoutiansheng/.openclaw/workspace-main/projects/mimo-voice/service \
+  --default-channel telegram
 ```
 
 If you want to preview first:
@@ -130,7 +176,7 @@ See also:
 
 ---
 
-## 7. Verify the plugin and service
+## 8. Verify the plugin and service
 
 ```bash
 openclaw plugins info mimo-voice-openclaw
@@ -141,7 +187,7 @@ If commands do not appear yet, restart the gateway and verify again.
 
 ---
 
-## 8. Test speech generation
+## 9. Test speech generation
 
 Recommended command:
 
@@ -157,7 +203,7 @@ openclaw mimo-voice tts "你好，这是一条测试语音"
 
 ---
 
-## 9. Test Telegram delivery
+## 10. Test Telegram delivery
 
 Recommended command:
 
@@ -173,7 +219,7 @@ openclaw mimo-voice send-telegram-voice "你好，这是一条测试语音" --ch
 
 ---
 
-## 10. If it still does not work
+## 11. If it still does not work
 
 Check these in order:
 
@@ -181,14 +227,14 @@ Check these in order:
 2. Did `mimo-voice-openclaw install` complete successfully?
 3. Does `openclaw plugins info mimo-voice-openclaw` show the plugin?
 4. Is the service reachable at `http://127.0.0.1:8091/health`?
-5. Is `MIMO_API_KEY` correct?
+5. Is `MIMO_API_KEY` correct, or does your mini-vico config provide a valid `api_key`?
 6. Is `TELEGRAM_BOT_TOKEN` correct?
 7. Are you sending to the right Telegram chat id?
 8. Did you restart the gateway if commands did not appear?
 
 ---
 
-## 11. Read next
+## 12. Read next
 
 - `../README.md`
 - `../README.zh-CN.md`
