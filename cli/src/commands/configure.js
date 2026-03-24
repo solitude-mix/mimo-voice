@@ -21,8 +21,10 @@ export async function configureCommand() {
     serviceBaseUrl: readFlag('service-base-url', DEFAULTS.serviceBaseUrl),
     serviceDir: readFlag('service-dir', DEFAULTS.serviceDir),
     defaultChatId: readFlag('default-chat-id', DEFAULTS.defaultChatId),
+    defaultChannel: readFlag('default-channel', DEFAULTS.defaultChannel),
     preferCli: readBoolFlag('prefer-cli', DEFAULTS.preferCli),
     clearDefaultChatId: hasFlag('clear-default-chat-id'),
+    clearDefaultChannel: hasFlag('clear-default-channel'),
     dryRun: hasFlag('dry-run'),
   });
 

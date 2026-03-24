@@ -263,6 +263,7 @@ Responsible for:
 Responsible for:
 
 - `service_base_url`
+- `default_channel`
 - how OpenClaw calls the service
 - how the plugin is wired into commands and tools
 
@@ -422,4 +423,7 @@ So the most realistic path today is:
 - get the install flow working
 - confirm your model API really works
 - get Telegram + OpenClaw working first
+- then evolve toward a fuller config model and multi-channel design
+nel design
+nClaw working first
 - then evolve toward a fuller config model and multi-channel design

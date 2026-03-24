@@ -168,7 +168,8 @@ mimo-voice-openclaw install
 ```bash
 mimo-voice-openclaw configure \
   --service-base-url http://127.0.0.1:8091 \
-  --service-dir /path/to/service
+  --service-dir /path/to/service \
+  --default-channel telegram
 ```
 
 如果你只想先看会改什么：
@@ -422,4 +423,6 @@ mimo-voice-openclaw install
 - 先把安装链路跑通
 - 先确认模型 API 可用
 - 先跑通 Telegram + OpenClaw
+- 再继续往更完整的配置和多渠道方案演进
+Telegram + OpenClaw
 - 再继续往更完整的配置和多渠道方案演进
