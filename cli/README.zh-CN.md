@@ -365,6 +365,8 @@ mimo-voice-openclaw install
 - `python3 -m ensurepip`
 - service 路径
 - plugin 路径
+- provider 环境变量是否存在以及默认值情况
+- Telegram 环境变量是否存在以及默认值情况
 - 已存在 `.venv` 的 `pip` 可用性
 - service 健康状态
 
@@ -422,6 +424,9 @@ mimo-voice-openclaw install
 
 - 先把安装链路跑通
 - 先确认模型 API 可用
+- 先跑通 Telegram + OpenClaw
+- 再继续往更完整的配置和多渠道方案演进
+
 - 先跑通 Telegram + OpenClaw
 - 再继续往更完整的配置和多渠道方案演进
 Telegram + OpenClaw

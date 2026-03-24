@@ -365,6 +365,8 @@ Checks:
 - `python3 -m ensurepip`
 - service paths
 - plugin paths
+- provider env presence and defaults
+- Telegram env presence and defaults
 - pip availability inside an existing `.venv`
 - service health
 
@@ -423,6 +425,8 @@ So the most realistic path today is:
 - get the install flow working
 - confirm your model API really works
 - get Telegram + OpenClaw working first
+- then evolve toward a fuller config model and multi-channel design
+penClaw working first
 - then evolve toward a fuller config model and multi-channel design
 nel design
 nClaw working first

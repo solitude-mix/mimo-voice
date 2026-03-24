@@ -5,6 +5,7 @@ import { promisify } from 'node:util';
 import { OPENCLAW_CONFIG, PACKAGED_PLUGIN_DIR, PACKAGED_SERVICE_DIR, DEFAULT_PLUGIN_SOURCE_DIR, DEFAULT_SERVICE_DIR } from './paths.js';
 
 const execFileAsync = promisify(execFile);
+const OPENCLAW_ENV_PATH = path.join(process.env.HOME || '', '.openclaw', '.env');
 
 export function resolveInstallPaths() {
   const serviceDir = process.env.MIMO_VOICE_SERVICE_DIR || DEFAULT_SERVICE_DIR;
@@ -25,6 +26,35 @@ async function hasCommand(command, args = ['--version']) {
   } catch {
     return false;
   }
+}
+
+function loadEnvValue(name) {
+  const direct = process.env[name];
+  if (direct && String(direct).trim()) return String(direct).trim();
+  if (!OPENCLAW_ENV_PATH || !fs.existsSync(OPENCLAW_ENV_PATH)) return null;
+  const raw = fs.readFileSync(OPENCLAW_ENV_PATH, 'utf8');
+  const match = raw.match(new RegExp(`^\\s*${name}\\s*=\\s*(.+?)\\s*$`, 'm'));
+  return match ? match[1].trim().replace(/^['"]|['"]$/g, '') : null;
+}
+
+function checkRequiredEnv(name, description) {
+  const value = loadEnvValue(name);
+  return {
+    ok: Boolean(value),
+    detail: value
+      ? `${name} configured (${description})`
+      : `Missing ${name} (${description}); set it in env or ~/.openclaw/.env`,
+  };
+}
+
+function checkOptionalEnv(name, fallback, description) {
+  const value = loadEnvValue(name);
+  return {
+    ok: true,
+    detail: value
+      ? `${name}=${value} (${description})`
+      : `${name} not set; using default ${fallback} (${description})`,
+  };
 }
 
 async function checkSystemEnsurePip() {
@@ -89,6 +119,9 @@ function summarizeDoctorOk(checks) {
       const healthCheck = checks.find((item) => item.name === 'service_health');
       return healthCheck?.ok === true;
     }
+    if (check.name === 'provider_api_url' || check.name === 'provider_model' || check.name === 'provider_default_voice' || check.name === 'provider_audio_format' || check.name === 'telegram_api_base') {
+      return true;
+    }
     return check.ok;
   });
 }
@@ -114,6 +147,14 @@ export async function runDoctor() {
 
   const ensurePip = await checkSystemEnsurePip();
   checks.push({ name: 'python_ensurepip', ok: ensurePip.ok, detail: ensurePip.detail });
+
+  checks.push({ name: 'provider_api_key', ...checkRequiredEnv('MIMO_API_KEY', 'provider credential') });
+  checks.push({ name: 'provider_api_url', ...checkOptionalEnv('MIMO_API_URL', 'https://api.xiaomimimo.com/v1/chat/completions', 'provider endpoint') });
+  checks.push({ name: 'provider_model', ...checkOptionalEnv('MIMO_MODEL', 'mimo-v2-tts', 'provider model') });
+  checks.push({ name: 'provider_default_voice', ...checkOptionalEnv('MIMO_DEFAULT_VOICE', 'default_zh', 'provider default voice') });
+  checks.push({ name: 'provider_audio_format', ...checkOptionalEnv('MIMO_AUDIO_FORMAT', 'wav', 'provider audio format') });
+  checks.push({ name: 'telegram_bot_token', ...checkRequiredEnv('TELEGRAM_BOT_TOKEN', 'Telegram delivery credential') });
+  checks.push({ name: 'telegram_api_base', ...checkOptionalEnv('TELEGRAM_API_BASE', 'https://api.telegram.org', 'Telegram API base') });
 
   const serviceVenvExists = fs.existsSync(paths.venvDir);
   checks.push({
