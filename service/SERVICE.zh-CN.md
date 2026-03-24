@@ -68,8 +68,8 @@ TELEGRAM_API_BASE=https://api.telegram.org
 
 当前状态说明：
 - `MIMO_PROVIDER_SOURCE=direct` 已可用
-- `MIMO_PROVIDER_SOURCE=mini-vico` 已有配置骨架，但还没有实现真正的 source adapter
-- 如果现在设置成 `mini-vico`，系统会明确报“未实现”，而不是假装成功
+- `MIMO_PROVIDER_SOURCE=mini-vico` 已支持最小可用的 JSON/YAML config adapter
+- 被选中的 profile 仍然必须提供必要字段，否则会明确报配置错误
 
 ## 启动
 

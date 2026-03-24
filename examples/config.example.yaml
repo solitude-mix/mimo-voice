@@ -23,11 +23,11 @@ provider:
   extra:
     style: calm
 
-  # Future mini-vico config-source skeleton.
+  # Minimal mini-vico config-source example.
   # source: mini-vico
   # mini_vico:
   #   profile: default
-  #   config_path: /path/to/mini-vico/config.yaml
+  #   config_path: /path/to/mini-vico/config.json
 
 audio:
   format: ogg_opus
@@ -51,3 +51,4 @@ integration:
 runtime:
   log_level: info
   temp_dir: ./tmp
+ temp_dir: ./tmp

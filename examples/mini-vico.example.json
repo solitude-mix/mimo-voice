@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "default": {
+      "base_url": "https://api.xiaomimimo.com/v1/chat/completions",
+      "api_key": "your_api_key",
+      "model": "mimo-v2-tts",
+      "voice": "default_zh",
+      "audio_format": "wav"
+    }
+  }
+}

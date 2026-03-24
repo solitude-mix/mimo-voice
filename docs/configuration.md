@@ -310,10 +310,9 @@ provider:
 ### What is implemented today
 
 - `source=direct` works
-- `source=mini-vico` is recognized as a planned source skeleton
-- choosing `source=mini-vico` currently raises an explicit configuration error instead of silently pretending to work
-
-This is intentional. It keeps the config boundary stable while making it obvious that the source adapter itself is still pending.
+- `source=mini-vico` works through a minimal adapter for JSON/YAML config files
+- the adapter resolves a selected profile into normalized provider settings
+- unsupported file formats or missing required fields fail explicitly with configuration errors
 
 When implemented, MiMo Voice should resolve that source into normalized provider fields such as:
 
@@ -384,5 +383,8 @@ If those six are unclear, no installer or plugin doc will make the project feel 
 - `../README.md`
 - `../README.zh-CN.md`
 - `../docs/openclaw-integration.md`
+- `../service/SERVICE.md`
+- `../plugin/PLUGIN.md`
+integration.md`
 - `../service/SERVICE.md`
 - `../plugin/PLUGIN.md`

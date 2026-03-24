@@ -70,8 +70,8 @@ This is the current provider config entry point before a fuller normalized confi
 
 Current state:
 - `MIMO_PROVIDER_SOURCE=direct` works today
-- `MIMO_PROVIDER_SOURCE=mini-vico` has a config skeleton only
-- selecting `mini-vico` currently fails explicitly instead of pretending to work
+- `MIMO_PROVIDER_SOURCE=mini-vico` works through a minimal JSON/YAML config adapter
+- required fields still need to exist in the selected config profile
 
 ## Start
 
