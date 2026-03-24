@@ -10,7 +10,7 @@ This CLI installs, configures, and verifies:
 - the common OpenClaw settings needed to connect them
 
 Current version:
-- `0.1.0-alpha.2`
+- `0.1.0-alpha.4`
 
 ## Requirements
 
@@ -46,37 +46,33 @@ brew install ffmpeg
 > Note: `python3 -m venv --help` succeeding does not guarantee that a newly created virtual environment will contain a working `pip`.
 > On some Ubuntu / WSL environments, a partial `venv` / `ensurepip` setup can create `.venv` successfully while still leaving it without usable `pip`.
 
-## Easiest way to start
+## Recommended startup
 
-If you have not installed the CLI globally, use:
-
-```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
-```
-
-## Optional: install globally first
+The most reliable path is to install the CLI globally first:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli
-```
-
-After that you can run:
-
-```bash
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
-mimo-voice-openclaw configure
-mimo-voice-openclaw uninstall
-mimo-voice-openclaw upgrade
 ```
+
+## About `npx`
+
+Some npm / npx versions do not reliably expose the package bin for this CLI when using one-shot remote execution.
+Because of that, the following style may fail on some machines even when the package is published correctly:
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.4 doctor
+```
+
+If you want reproducible behavior, prefer the global install path above.
 
 ## Recommended flow
 
 ### 1. Check prerequisites
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+mimo-voice-openclaw doctor
 ```
 
 `doctor` checks:
@@ -90,10 +86,12 @@ npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 - whether an existing `.venv` already has a working `pip`
 - service health
 
+If `service_health` is already OK, a missing `service/.venv` path is treated as tolerated instead of a hard failure.
+
 ### 2. Install or refresh
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+mimo-voice-openclaw install
 ```
 
 The install flow will:
@@ -107,7 +105,7 @@ The install flow will:
 ### 3. Configure the plugin
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure \
+mimo-voice-openclaw configure \
   --service-base-url http://127.0.0.1:8091 \
   --service-dir /path/to/service
 ```
@@ -115,13 +113,13 @@ npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure \
 Preview configuration changes:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure --dry-run
+mimo-voice-openclaw configure --dry-run
 ```
 
 Clear the default Telegram chat id:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure --clear-default-chat-id
+mimo-voice-openclaw configure --clear-default-chat-id
 ```
 
 ### 4. Verify
@@ -141,15 +139,20 @@ Yes.
 This package depends on `ffmpeg` for audio conversion.
 
 ### Can I use it without global installation?
-Yes.
+Yes, but the most reliable path is still global install.
 
-Use `npx` for the first run.
-
-### When can I use `mimo-voice-openclaw ...` directly?
-Only after running:
+If you do not want to install globally, prefer running the local source checkout directly during development:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli
+node src/index.js doctor
+node src/index.js install
+```
+
+### When can I use `mimo-voice-openclaw ...` directly?
+After running:
+
+```bash
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
 ```
 
 ### Why can `doctor` fail on `service_health` the first time?
@@ -189,7 +192,7 @@ rm -rf /home/zhouts/.openclaw/mimo-voice-openclaw/service/.venv
 3. Run install again:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+mimo-voice-openclaw install
 ```
 
 The install flow reuses an existing `.venv` when it finds one.

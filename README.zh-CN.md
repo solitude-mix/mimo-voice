@@ -17,7 +17,7 @@ MiMo Voice 是一个语音项目，用来把 MiMo TTS、Telegram voice 发送，
 
 当前推荐包版本：
 
-- `mimo-voice-openclaw-cli@0.1.0-alpha.2`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.4`
 
 ## 快速开始
 

@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.0-alpha.4
+
+Doctor and CLI usage polish release.
+
+### Included in this release
+- treat a missing `service/.venv` as tolerated when `service_health` is already OK
+- keep `doctor` strict for real prerequisites while avoiding false negatives on healthy running services
+- update CLI docs to recommend global install as the most reliable path
+- document that one-shot `npx` execution may fail on some npm / npx versions even when the package is published correctly
+- update examples to use `mimo-voice-openclaw ...` after global install or `node src/index.js ...` for local development
+
+### Notes
+- `upgrade` currently behaves like a refresh install
+- `configure` rewrites JSON formatting
+- Some environments may use a local extension-directory deployment path during installation
+
 ## 0.1.0-alpha.3
 
 Installer reliability and documentation update.

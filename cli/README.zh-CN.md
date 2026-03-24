@@ -10,7 +10,7 @@ MiMo Voice 的 alpha 安装 CLI。
 - OpenClaw 中与该插件相关的常见设置
 
 当前版本：
-- `0.1.0-alpha.2`
+- `0.1.0-alpha.4`
 
 ## 环境要求
 
@@ -46,37 +46,33 @@ brew install ffmpeg
 > 注意：`python3 -m venv --help` 可用，并不代表新创建的虚拟环境一定带有可用的 `pip`。
 > 某些 Ubuntu / WSL 环境缺少完整的 `ensurepip`/`venv` 组件时，会出现 `.venv` 创建成功但 `pip` 不可用的情况。
 
-## 新手最简单的用法
+## 推荐启动方式
 
-如果你没有全局安装这个 CLI，请直接用：
-
-```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
-```
-
-## 如果你想先全局安装
+目前最稳的方式，是先全局安装 CLI：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli
-```
-
-安装后可直接使用：
-
-```bash
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
-mimo-voice-openclaw configure
-mimo-voice-openclaw uninstall
-mimo-voice-openclaw upgrade
 ```
+
+## 关于 `npx`
+
+某些 npm / npx 版本下，一次性远程执行时不会稳定暴露这个包的 bin 命令。
+所以这类写法在部分机器上可能失败，即使包本身已经正确发布：
+
+```bash
+npx mimo-voice-openclaw-cli@0.1.0-alpha.4 doctor
+```
+
+如果你想要最稳的行为，优先使用上面的全局安装方式。
 
 ## 推荐使用流程
 
 ### 1. 检查依赖
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
+mimo-voice-openclaw doctor
 ```
 
 `doctor` 会检查：
@@ -90,10 +86,12 @@ npx mimo-voice-openclaw-cli@0.1.0-alpha.2 doctor
 - 如果 `.venv` 已存在，检查其中的 `pip` 是否可用
 - service 健康状态
 
+如果 `service_health` 已经正常，通过时即便 `service/.venv` 路径缺失，也只会被视为可容忍状态，而不是整体失败。
+
 ### 2. 安装或刷新
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+mimo-voice-openclaw install
 ```
 
 安装流程会：
@@ -107,7 +105,7 @@ npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
 ### 3. 写入插件配置
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure \
+mimo-voice-openclaw configure \
   --service-base-url http://127.0.0.1:8091 \
   --service-dir /path/to/service
 ```
@@ -115,13 +113,13 @@ npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure \
 如果你只想预览配置变更：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure --dry-run
+mimo-voice-openclaw configure --dry-run
 ```
 
 如果你要清掉默认 Telegram chat id：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 configure --clear-default-chat-id
+mimo-voice-openclaw configure --clear-default-chat-id
 ```
 
 ### 4. 验证
@@ -141,18 +139,21 @@ openclaw mimo-voice status
 这个包依赖 `ffmpeg` 做音频转换。
 
 ### 不全局安装也能用吗？
-可以。
+可以，但最稳的方式仍然是全局安装。
 
-第一次使用直接走 `npx` 就行。
-
-### 什么时候才能直接用 `mimo-voice-openclaw ...`？
-只有在你执行过：
+如果你不想全局安装，开发阶段更建议直接运行本地源码：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli
+node src/index.js doctor
+node src/index.js install
 ```
 
-之后，才能直接使用。
+### 什么时候才能直接用 `mimo-voice-openclaw ...`？
+执行过下面这句之后就可以：
+
+```bash
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.4
+```
 
 ### 为什么第一次 `doctor` 可能会报 `service_health` 失败？
 通常是因为服务还没启动。
@@ -191,7 +192,7 @@ rm -rf /home/zhouts/.openclaw/mimo-voice-openclaw/service/.venv
 3. 重新执行安装：
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.2 install
+mimo-voice-openclaw install
 ```
 
 原因是当前安装流程在发现 `.venv` 已存在时会优先复用；

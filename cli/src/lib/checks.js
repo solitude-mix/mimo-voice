@@ -83,6 +83,16 @@ export async function checkServiceHealth() {
   }
 }
 
+function summarizeDoctorOk(checks) {
+  return checks.every((check) => {
+    if (check.name === 'service_venv' && check.ok === false) {
+      const healthCheck = checks.find((item) => item.name === 'service_health');
+      return healthCheck?.ok === true;
+    }
+    return check.ok;
+  });
+}
+
 export async function runDoctor() {
   const paths = resolveInstallPaths();
   const checks = [];
@@ -106,7 +116,13 @@ export async function runDoctor() {
   checks.push({ name: 'python_ensurepip', ok: ensurePip.ok, detail: ensurePip.detail });
 
   const serviceVenvExists = fs.existsSync(paths.venvDir);
-  checks.push({ name: 'service_venv', ok: serviceVenvExists, detail: paths.venvDir });
+  checks.push({
+    name: 'service_venv',
+    ok: serviceVenvExists,
+    detail: serviceVenvExists
+      ? paths.venvDir
+      : `${paths.venvDir} (missing; tolerated when service_health is already OK)`,
+  });
 
   if (serviceVenvExists) {
     const venvPip = await checkVenvPip(paths.venvDir);
@@ -116,5 +132,5 @@ export async function runDoctor() {
   const health = await checkServiceHealth();
   checks.push({ name: 'service_health', ok: health.ok, detail: health.detail || health.url });
 
-  return { ok: checks.every((c) => c.ok), checks, paths };
+  return { ok: summarizeDoctorOk(checks), checks, paths };
 }

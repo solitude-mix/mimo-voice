@@ -17,7 +17,7 @@ If you are new, start with:
 
 Current recommended package version:
 
-- `mimo-voice-openclaw-cli@0.1.0-alpha.2`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.4`
 
 ## Quick start
 
