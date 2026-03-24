@@ -33,6 +33,29 @@ sudo apt install -y python3-venv
 sudo apt install -y python3.12-venv
 ```
 
+## provider 配置入口
+
+当前最实际可用的 provider 侧环境变量：
+
+```env
+MIMO_API_KEY=your_mimo_api_key
+MIMO_API_URL=https://api.xiaomimimo.com/v1/chat/completions
+MIMO_MODEL=mimo-v2-tts
+MIMO_DEFAULT_VOICE=default_zh
+MIMO_AUDIO_FORMAT=wav
+```
+
+当前最实际可用的 Telegram 侧环境变量：
+
+```env
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_API_BASE=https://api.telegram.org
+```
+
+当前 alpha 代码会从进程环境变量或 `~/.openclaw/.env` 读取这些值。
+
+在更完整的统一配置文件落地前，这就是当前 provider 配置入口。
+
 ## 启动
 
 ```bash

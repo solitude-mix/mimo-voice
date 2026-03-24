@@ -20,6 +20,7 @@ MiMo Voice 是一个面向 OpenClaw 生态的语音发送项目。
 - **Telegram voice 发送**
 - **OpenClaw 接入**
 - **CLI 安装与维护**
+- **通过 env / `~/.openclaw/.env` 落地的 provider 配置入口**
 - **MiMo / mini-vico 一类模型配置的落地路径**
 
 后续计划支持更多发送渠道，例如飞书、微信等。

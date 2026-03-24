@@ -216,8 +216,31 @@ That works, but it is not yet the clean final model.
 
 ```env
 MIMO_API_KEY=your_mimo_api_key
+MIMO_API_URL=https://api.xiaomimimo.com/v1/chat/completions
+MIMO_MODEL=mimo-v2-tts
+MIMO_DEFAULT_VOICE=default_zh
+MIMO_AUDIO_FORMAT=wav
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_API_BASE=https://api.telegram.org
 ```
+
+#### What those current env vars mean
+
+##### Provider-side env vars
+
+- `MIMO_API_KEY`: required provider credential
+- `MIMO_API_URL`: provider endpoint override
+- `MIMO_MODEL`: provider model override
+- `MIMO_DEFAULT_VOICE`: provider default voice override
+- `MIMO_AUDIO_FORMAT`: provider output format override
+
+##### Channel-side env vars
+
+- `TELEGRAM_BOT_TOKEN`: Telegram bot credential
+- `TELEGRAM_API_BASE`: Telegram API base override
+
+This is the current practical provider config entry point in alpha code.
+It is still env-based, but it is already much better than leaving provider URL/model entirely implicit in code defaults.
 
 #### Plugin example config
 

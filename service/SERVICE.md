@@ -35,6 +35,29 @@ If your system Python is 3.12, also install:
 sudo apt install -y python3.12-venv
 ```
 
+## Provider configuration entry points
+
+Current practical provider-side environment variables:
+
+```env
+MIMO_API_KEY=your_mimo_api_key
+MIMO_API_URL=https://api.xiaomimimo.com/v1/chat/completions
+MIMO_MODEL=mimo-v2-tts
+MIMO_DEFAULT_VOICE=default_zh
+MIMO_AUDIO_FORMAT=wav
+```
+
+Current practical Telegram-side environment variables:
+
+```env
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_API_BASE=https://api.telegram.org
+```
+
+Current alpha code reads these values from process env or `~/.openclaw/.env`.
+
+This is the current provider config entry point before a fuller normalized config file is introduced.
+
 ## Start
 
 ```bash

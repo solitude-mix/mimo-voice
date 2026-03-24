@@ -21,6 +21,7 @@ The current alpha focuses on:
 - **Telegram voice sending**
 - **OpenClaw integration**
 - **CLI installation and maintenance**
+- **a practical provider-config path via env / `~/.openclaw/.env`**
 - **a practical path for MiMo / mini-vico style model configuration**
 
 More delivery channels may be added later, including Feishu and WeChat.

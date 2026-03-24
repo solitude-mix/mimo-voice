@@ -30,13 +30,18 @@ def load_env_value(name: str) -> Optional[str]:
     return None
 
 
+def load_env_value_or_default(name: str, default: str) -> str:
+    value = load_env_value(name)
+    return value if value else default
+
+
 @dataclass(frozen=True)
 class ProviderSettings:
     kind: str = "mimo"
-    base_url: str = "https://api.xiaomimimo.com/v1/chat/completions"
-    model: str = "mimo-v2-tts"
-    default_voice: str = "default_zh"
-    audio_format: str = "wav"
+    base_url: str = field(default_factory=lambda: load_env_value_or_default("MIMO_API_URL", "https://api.xiaomimimo.com/v1/chat/completions"))
+    model: str = field(default_factory=lambda: load_env_value_or_default("MIMO_MODEL", "mimo-v2-tts"))
+    default_voice: str = field(default_factory=lambda: load_env_value_or_default("MIMO_DEFAULT_VOICE", "default_zh"))
+    audio_format: str = field(default_factory=lambda: load_env_value_or_default("MIMO_AUDIO_FORMAT", "wav"))
 
     @property
     def api_key(self) -> str:
@@ -48,7 +53,7 @@ class ProviderSettings:
 
 @dataclass(frozen=True)
 class ChannelTelegramSettings:
-    api_base: str = "https://api.telegram.org"
+    api_base: str = field(default_factory=lambda: load_env_value_or_default("TELEGRAM_API_BASE", "https://api.telegram.org"))
 
     @property
     def bot_token(self) -> str:

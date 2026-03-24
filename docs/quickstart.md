@@ -67,7 +67,12 @@ Copy or adapt these values into your environment or `~/.openclaw/.env`:
 
 ```env
 MIMO_API_KEY=your_mimo_api_key
+MIMO_API_URL=https://api.xiaomimimo.com/v1/chat/completions
+MIMO_MODEL=mimo-v2-tts
+MIMO_DEFAULT_VOICE=default_zh
+MIMO_AUDIO_FORMAT=wav
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_API_BASE=https://api.telegram.org
 ```
 
 See:
