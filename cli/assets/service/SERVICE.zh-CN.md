@@ -38,6 +38,8 @@ sudo apt install -y python3.12-venv
 当前最实际可用的 provider 侧环境变量：
 
 ```env
+MIMO_PROVIDER_KIND=mimo
+MIMO_PROVIDER_SOURCE=direct
 MIMO_API_KEY=your_mimo_api_key
 MIMO_API_URL=https://api.xiaomimimo.com/v1/chat/completions
 MIMO_MODEL=mimo-v2-tts
@@ -52,9 +54,22 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 TELEGRAM_API_BASE=https://api.telegram.org
 ```
 
+计划中的 source 骨架环境变量（当前仅作为骨架预留，未实现真实读取）：
+
+```env
+# MIMO_PROVIDER_SOURCE=mini-vico
+# MIMO_PROVIDER_PROFILE=default
+# MINI_VICO_CONFIG_PATH=/path/to/mini-vico/config.yaml
+```
+
 当前 alpha 代码会从进程环境变量或 `~/.openclaw/.env` 读取这些值。
 
 在更完整的统一配置文件落地前，这就是当前 provider 配置入口。
+
+当前状态说明：
+- `MIMO_PROVIDER_SOURCE=direct` 已可用
+- `MIMO_PROVIDER_SOURCE=mini-vico` 已支持最小可用的 JSON/YAML config adapter
+- 被选中的 profile 仍然必须提供必要字段，否则会明确报配置错误
 
 ## 启动
 

@@ -137,6 +137,8 @@ mimo-voice-openclaw doctor
 - `python3 -m ensurepip`
 - service paths
 - plugin paths
+- provider source selection (`MIMO_PROVIDER_SOURCE`)
+- mini-vico config path presence when source=`mini-vico`
 - provider config presence (`MIMO_API_KEY`)
 - provider config overrides / defaults (`MIMO_API_URL`, `MIMO_MODEL`, `MIMO_DEFAULT_VOICE`, `MIMO_AUDIO_FORMAT`)
 - Telegram config presence (`TELEGRAM_BOT_TOKEN`)

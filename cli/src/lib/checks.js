@@ -59,6 +59,48 @@ function checkOptionalEnv(name, fallback, description) {
   };
 }
 
+function checkProviderSourceEnv() {
+  const source = (loadEnvValue('MIMO_PROVIDER_SOURCE') || 'direct').trim();
+  const normalized = source.toLowerCase();
+  if (normalized === 'direct') {
+    return { ok: true, detail: `MIMO_PROVIDER_SOURCE=${source} (direct env-based provider config)` };
+  }
+  if (normalized === 'mini-vico' || normalized === 'mini_vico') {
+    const profile = loadEnvValue('MIMO_PROVIDER_PROFILE') || 'default';
+    const configPath = loadEnvValue('MINI_VICO_CONFIG_PATH');
+    return {
+      ok: Boolean(configPath),
+      detail: configPath
+        ? `MIMO_PROVIDER_SOURCE=${source} profile=${profile} config_path=${configPath}`
+        : `MIMO_PROVIDER_SOURCE=${source} but MINI_VICO_CONFIG_PATH is missing`,
+    };
+  }
+  return {
+    ok: false,
+    detail: `Unsupported MIMO_PROVIDER_SOURCE=${source}. Supported values: direct, mini-vico`,
+  };
+}
+
+function checkMiniVicoConfigPath() {
+  const source = (loadEnvValue('MIMO_PROVIDER_SOURCE') || 'direct').trim().toLowerCase();
+  if (!(source === 'mini-vico' || source === 'mini_vico')) {
+    return { ok: true, detail: 'mini-vico config path check skipped (provider source is not mini-vico)' };
+  }
+  const configPath = loadEnvValue('MINI_VICO_CONFIG_PATH');
+  if (!configPath) {
+    return { ok: false, detail: 'MINI_VICO_CONFIG_PATH is required when MIMO_PROVIDER_SOURCE=mini-vico' };
+  }
+  const expanded = configPath.startsWith('~')
+    ? path.join(process.env.HOME || '', configPath.slice(1))
+    : configPath;
+  return {
+    ok: fs.existsSync(expanded),
+    detail: fs.existsSync(expanded)
+      ? `mini-vico config file found: ${expanded}`
+      : `mini-vico config file not found: ${expanded}`,
+  };
+}
+
 async function checkSystemEnsurePip() {
   try {
     await execFileAsync('python3', ['-m', 'ensurepip', '--version'], { timeout: 10000 });
@@ -247,18 +289,27 @@ export async function runDoctor() {
   const ensurePip = await checkSystemEnsurePip();
   checks.push({ name: 'python_ensurepip', ok: ensurePip.ok, detail: ensurePip.detail });
 
-  checks.push({ name: 'provider_api_key', ...checkRequiredEnv('MIMO_API_KEY', 'provider credential') });
-  checks.push({ name: 'provider_api_url', ...checkOptionalEnv('MIMO_API_URL', 'https://api.xiaomimimo.com/v1/chat/completions', 'provider endpoint') });
-  checks.push({ name: 'provider_model', ...checkOptionalEnv('MIMO_MODEL', 'mimo-v2-tts', 'provider model') });
-  checks.push({ name: 'provider_default_voice', ...checkOptionalEnv('MIMO_DEFAULT_VOICE', 'default_zh', 'provider default voice') });
-  checks.push({ name: 'provider_audio_format', ...checkOptionalEnv('MIMO_AUDIO_FORMAT', 'wav', 'provider audio format') });
+  checks.push({ name: 'provider_source', ...checkProviderSourceEnv() });
+  checks.push({ name: 'mini_vico_config_path', ...checkMiniVicoConfigPath() });
+  checks.push({ name: 'provider_api_key', ...checkRequiredEnv('MIMO_API_KEY', 'provider credential (required for direct, optional if mini-vico config embeds api_key)') });
+  checks.push({ name: 'provider_api_url', ...checkOptionalEnv('MIMO_API_URL', 'https://api.xiaomimimo.com/v1/chat/completions', 'provider endpoint (used directly when source=direct)') });
+  checks.push({ name: 'provider_model', ...checkOptionalEnv('MIMO_MODEL', 'mimo-v2-tts', 'provider model (used directly when source=direct)') });
+  checks.push({ name: 'provider_default_voice', ...checkOptionalEnv('MIMO_DEFAULT_VOICE', 'default_zh', 'provider default voice (used directly when source=direct)') });
+  checks.push({ name: 'provider_audio_format', ...checkOptionalEnv('MIMO_AUDIO_FORMAT', 'wav', 'provider audio format (used directly when source=direct)') });
   checks.push({ name: 'telegram_bot_token', ...checkRequiredEnv('TELEGRAM_BOT_TOKEN', 'Telegram delivery credential') });
   checks.push({ name: 'telegram_api_base', ...checkOptionalEnv('TELEGRAM_API_BASE', 'https://api.telegram.org', 'Telegram API base') });
 
-  const providerUrl = loadEnvValue('MIMO_API_URL') || 'https://api.xiaomimimo.com/v1/chat/completions';
+  const providerSource = (loadEnvValue('MIMO_PROVIDER_SOURCE') || 'direct').trim().toLowerCase();
+  const providerUrl = providerSource === 'direct'
+    ? (loadEnvValue('MIMO_API_URL') || 'https://api.xiaomimimo.com/v1/chat/completions')
+    : null;
   const telegramApiBase = loadEnvValue('TELEGRAM_API_BASE') || 'https://api.telegram.org';
-  const providerReach = await checkUrlReachable(providerUrl, { method: 'POST', timeoutMs: 8000 });
-  checks.push({ name: 'provider_endpoint_reachable', ok: providerReach.ok, detail: providerReach.detail });
+  if (providerUrl) {
+    const providerReach = await checkUrlReachable(providerUrl, { method: 'POST', timeoutMs: 8000 });
+    checks.push({ name: 'provider_endpoint_reachable', ok: providerReach.ok, detail: providerReach.detail });
+  } else {
+    checks.push({ name: 'provider_endpoint_reachable', ok: true, detail: 'provider endpoint reachability skipped (source is not direct)' });
+  }
   const telegramReach = await checkUrlReachable(telegramApiBase, { method: 'GET', timeoutMs: 8000 });
   checks.push({ name: 'telegram_api_reachable', ok: telegramReach.ok, detail: telegramReach.detail });
 
@@ -299,8 +350,12 @@ export async function runDoctor() {
   if (!health.ok && serviceStatus.ok === false) {
     hints.push('Service is not currently running according to scripts/status.sh. Check .runtime/service.log and restart with scripts/start-bg.sh.');
   }
-  if (providerReach.ok && String(providerReach.detail).includes('HTTP 401')) {
+  const providerReachCheck = checks.find((item) => item.name === 'provider_endpoint_reachable');
+  if (providerReachCheck?.detail && String(providerReachCheck.detail).includes('HTTP 401')) {
     hints.push('Provider endpoint is reachable but returned HTTP 401. Re-check MIMO_API_KEY and provider auth expectations.');
+  }
+  if (providerSource !== 'direct') {
+    hints.push('Provider source is not direct. Ensure MINI_VICO_CONFIG_PATH points to a valid config file and the selected profile contains base_url/model/(api_key or env fallback).');
   }
   if (!telegramReach.ok) {
     hints.push('Telegram API reachability probe failed. Check outbound network access, proxy rules, or Telegram connectivity from this machine.');

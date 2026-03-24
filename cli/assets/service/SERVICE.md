@@ -40,6 +40,8 @@ sudo apt install -y python3.12-venv
 Current practical provider-side environment variables:
 
 ```env
+MIMO_PROVIDER_KIND=mimo
+MIMO_PROVIDER_SOURCE=direct
 MIMO_API_KEY=your_mimo_api_key
 MIMO_API_URL=https://api.xiaomimimo.com/v1/chat/completions
 MIMO_MODEL=mimo-v2-tts
@@ -54,9 +56,22 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 TELEGRAM_API_BASE=https://api.telegram.org
 ```
 
+Planned source-skeleton environment variables (recognized as skeleton only, not implemented yet):
+
+```env
+# MIMO_PROVIDER_SOURCE=mini-vico
+# MIMO_PROVIDER_PROFILE=default
+# MINI_VICO_CONFIG_PATH=/path/to/mini-vico/config.yaml
+```
+
 Current alpha code reads these values from process env or `~/.openclaw/.env`.
 
 This is the current provider config entry point before a fuller normalized config file is introduced.
+
+Current state:
+- `MIMO_PROVIDER_SOURCE=direct` works today
+- `MIMO_PROVIDER_SOURCE=mini-vico` works through a minimal JSON/YAML config adapter
+- required fields still need to exist in the selected config profile
 
 ## Start
 
