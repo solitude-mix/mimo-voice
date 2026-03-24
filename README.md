@@ -6,86 +6,40 @@
 
 [中文说明](./README.zh-CN.md) | [English](./README.md)
 
-MiMo Voice is a voice-delivery project for the OpenClaw ecosystem.
+MiMo Voice is a voice-delivery project for **OpenClaw + Telegram**.
 
-Its goal is not just to be a text-to-speech script. The long-term direction is to connect these pieces into one reusable capability:
+## Current support scope
 
-- read voice-model configuration
-- call a TTS model or API
-- generate playable audio
-- send that audio as a voice message through a channel
-- expose the whole flow as an OpenClaw integration
+- **Model platform:** Xiaomi only
+- **Current model:** **MiMo-V2-TTS**
+- **Current delivery channel:** **Telegram voice**
+- **Current integration path:** **OpenClaw plugin + CLI**
 
-The current alpha focuses on:
-
-- **Telegram voice sending**
-- **OpenClaw integration**
-- **CLI installation and maintenance**
-- **a practical provider-config path via env / `~/.openclaw/.env`**
-- **a practical path for MiMo / mini-vico style model configuration**
-
-More delivery channels may be added later, including Feishu and WeChat.
+If more models are added later, they are still expected to stay within the **Xiaomi platform** rather than turning this project into a generic multi-vendor TTS aggregator.
 
 ---
 
-## What is this for?
+## What you actually need to edit
 
-This project is for you if one or more of these are true:
+If you are new, focus on **2 files**.
 
-- you already use **OpenClaw**
-- you want OpenClaw to send **Telegram voice messages**
-- you already have a working **TTS model / API**
-- you want one reusable layer for both model calls and channel delivery
+### 1. `~/.openclaw/.env`
 
-If you only want to test whether a single TTS model can produce audio, this repository can still help. But its long-term purpose is broader: it aims to become an installable voice-delivery component for OpenClaw.
+This is the main config file.
 
----
+### 2. `~/.openclaw/mini-vico.json`
 
-## What works today
+Only needed if you use:
 
-### Existing pieces
-
-- MiMo Voice Python service
-- audio generation and conversion
-- Telegram voice sending
-- OpenClaw plugin
-- install / configure / verify CLI
-
-### Alpha-stage reality
-
-This is still an **alpha** project, so expect active changes:
-
-- the configuration model will continue to evolve
-- the documentation and repository layout will continue to improve
-- the most newcomer-friendly path today is Telegram + OpenClaw first
-- multi-channel support is planned, but not fully expanded yet
+```env
+MIMO_PROVIDER_SOURCE=mini-vico
+```
 
 ---
 
-## 5-minute first run
+## Shortest path: just follow these steps
 
-If you are new, do not start with architecture details. Start here.
-
-### Step 1: make sure you have these prerequisites
-
-You will need at least:
-
-- Linux / WSL / macOS
-- `openclaw`
-- `python3`
-- `ffmpeg`
-- `node` / `npm`
-- a working **TTS model API**
-- a working **Telegram bot**
-
-If you are not sure whether your machine is ready, go straight to:
-
-- [CLI install guide](./cli/README.md)
-- [CLI 安装与使用说明（中文）](./cli/README.zh-CN.md)
-
----
-
-### Step 2: install system dependencies
+### Step 1: install system dependencies
 
 Ubuntu / WSL:
 
@@ -94,13 +48,13 @@ sudo apt update
 sudo apt install -y ffmpeg python3-venv
 ```
 
-If your system Python is 3.12, also install:
+If your Python is 3.12:
 
 ```bash
 sudo apt install -y python3.12-venv
 ```
 
-macOS (Homebrew):
+macOS:
 
 ```bash
 brew install ffmpeg
@@ -108,19 +62,76 @@ brew install ffmpeg
 
 ---
 
-### Step 3: install the CLI
-
-Current recommended package version:
-
-- `mimo-voice-openclaw-cli@0.1.0-alpha.6`
-
-Global install:
+### Step 2: install the CLI
 
 ```bash
 npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.6
 ```
 
-Then run:
+---
+
+### Step 3: write `~/.openclaw/.env`
+
+#### Option A: direct MiMo config (simplest)
+
+Write this into:
+
+```bash
+~/.openclaw/.env
+```
+
+```env
+MIMO_PROVIDER_SOURCE=direct
+MIMO_API_KEY=your_mimo_api_key
+MIMO_API_URL=https://api.xiaomimimo.com/v1/chat/completions
+MIMO_MODEL=mimo-v2-tts
+MIMO_DEFAULT_VOICE=default_zh
+MIMO_AUDIO_FORMAT=wav
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_API_BASE=https://api.telegram.org
+```
+
+#### Option B: read from mini-vico config
+
+Set `~/.openclaw/.env` to:
+
+```env
+MIMO_PROVIDER_SOURCE=mini-vico
+MIMO_PROVIDER_PROFILE=default
+MINI_VICO_CONFIG_PATH=/home/zhoutiansheng/.openclaw/mini-vico.json
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_API_BASE=https://api.telegram.org
+```
+
+Then create:
+
+```bash
+~/.openclaw/mini-vico.json
+```
+
+```json
+{
+  "profiles": {
+    "default": {
+      "base_url": "https://api.xiaomimimo.com/v1/chat/completions",
+      "api_key": "your_api_key",
+      "model": "mimo-v2-tts",
+      "voice": "default_zh",
+      "audio_format": "wav"
+    }
+  }
+}
+```
+
+If you do not want to keep `api_key` in `mini-vico.json`, you can instead keep it in `~/.openclaw/.env`:
+
+```env
+MIMO_API_KEY=your_mimo_api_key
+```
+
+---
+
+### Step 4: run doctor and install
 
 ```bash
 mimo-voice-openclaw doctor
@@ -129,249 +140,125 @@ mimo-voice-openclaw install
 
 ---
 
-### Step 4: connect OpenClaw to the service
-
-Basic configure example:
+### Step 5: connect OpenClaw to the service
 
 ```bash
 mimo-voice-openclaw configure \
   --service-base-url http://127.0.0.1:8091 \
-  --service-dir /path/to/service
+  --service-dir /absolute/path/to/mimo-voice/service \
+  --default-channel telegram
 ```
 
-Then verify:
+### What `--service-dir` means
+
+It is:
+
+- the absolute path to this repository's `service/` directory
+- not the OpenClaw installation directory
+- not an arbitrary new folder named `service`
+
+Example:
+
+```bash
+mimo-voice-openclaw configure \
+  --service-base-url http://127.0.0.1:8091 \
+  --service-dir /home/zhoutiansheng/.openclaw/workspace-main/projects/mimo-voice/service \
+  --default-channel telegram
+```
+
+If you only want to preview changes first:
+
+```bash
+mimo-voice-openclaw configure --dry-run
+```
+
+---
+
+### Step 6: verify plugin and service
 
 ```bash
 openclaw plugins info mimo-voice-openclaw
 openclaw mimo-voice status
 ```
 
-If commands do not appear immediately after installation, restart the OpenClaw gateway and try again.
+If commands do not appear yet, restart the gateway and try again.
 
 ---
 
-## The biggest practical question: how do I configure the model and API?
+### Step 7: test speech generation
 
-This is the part the README must explain clearly.
-
-### You need to know at least 4 things
-
-No matter whether the backend is MiMo, mini-vico, or another compatible provider later, you need to know at least:
-
-1. **API base URL**
-   - for example: `http://127.0.0.1:8000/v1`
-   - or a remote provider endpoint
-
-2. **API key**
-   - required if your model service uses authentication
-
-3. **Model name**
-   - a concrete TTS model identifier exposed by your backend
-
-4. **Voice / output format settings**
-   - such as voice name, output format, and sample rate
-
----
-
-### A simple way to think about configuration
-
-The exact structure may continue to evolve during alpha, but the easiest way to reason about it is as three layers:
-
-#### 1. Provider config: how audio is generated
-
-This is where you tell the project:
-
-- where the model service lives
-- which API key to use
-- which model to call
-- which default voice to use
-
-#### 2. Channel config: how audio is delivered
-
-This is where you tell the project:
-
-- which channel to send through
-- which Telegram bot token to use
-- which default chat id to use
-
-#### 3. Integration config: how OpenClaw connects to it
-
-This is where you tell the project:
-
-- which service URL OpenClaw should call
-- whether a default chat id exists
-- how the plugin is wired into OpenClaw commands and tools
-
----
-
-### A conceptual minimal config example
-
-> Note: this example is here to explain the shape of the config. Exact field names may still change during alpha. For current command behavior, follow the CLI docs and later configuration docs.
-
-```yaml
-provider:
-  kind: mimo
-  base_url: http://127.0.0.1:8000/v1
-  api_key: your_api_key
-  model: your_tts_model
-  voice: default
-
-channel:
-  kind: telegram
-  telegram:
-    bot_token: 123456:abcde
-    default_chat_id: 123456789
-
-audio:
-  format: ogg_opus
-  sample_rate: 24000
-
-integration:
-  openclaw:
-    service_base_url: http://127.0.0.1:8091
+```bash
+openclaw mimo-voice generate-speech "Hello, this is a test voice message"
 ```
 
-If your long-term goal is to reuse **mini-vico** configuration directly, the ideal end state is:
+Compatibility command:
 
-- declare where model settings are sourced from
-- avoid making users enter the same provider settings twice
-
-For now, the practical rule is simple:
-
-**MiMo Voice must know how to generate audio and how to deliver it.**
+```bash
+openclaw mimo-voice tts "Hello, this is a test voice message"
+```
 
 ---
 
-## What does the OpenClaw integration do?
+### Step 8: test Telegram delivery
 
-The purpose of the OpenClaw integration is to let OpenClaw:
+```bash
+openclaw mimo-voice deliver-voice "Hello, this is a test voice message" --chat-id 123456789
+```
 
-- call the MiMo Voice service
-- convert text into voice
-- send the resulting audio to the target channel
+Compatibility command:
 
-The clearest path today is:
-
-1. install the Python service with the CLI
-2. deploy the OpenClaw plugin with the CLI
-3. write the required OpenClaw config with `configure`
-4. call the `mimo-voice` capability from OpenClaw
-
-If you are trying this for the first time, get the **Telegram path** working first before making the config more sophisticated.
+```bash
+openclaw mimo-voice send-telegram-voice "Hello, this is a test voice message" --chat-id 123456789
+```
 
 ---
 
-## Repository contents
+## If you only remember the critical values
 
-The repository currently has three main parts:
+At minimum, know these 4 values:
 
-### 1. `service/`
-The Python voice service. It is responsible for:
+- `MIMO_API_KEY`
+- `MIMO_API_URL`
+- `MIMO_MODEL`
+- `TELEGRAM_BOT_TOKEN`
 
-- calling TTS backends
-- converting audio
-- exposing service APIs
-- executing send logic
+If you use mini-vico source, also know:
 
-### 2. `plugin/`
-The OpenClaw plugin. It is responsible for:
-
-- connecting OpenClaw commands / tools to the service
-- managing the OpenClaw-side integration
-
-### 3. `cli/`
-The install and maintenance tool. It is responsible for:
-
-- `doctor`
-- `install`
-- `configure`
-- `uninstall`
-- `upgrade`
-
-This repository layout reflects the current alpha implementation. It is not necessarily the final architecture. If the project expands toward Feishu, WeChat, and multiple providers, the module boundaries will likely be refactored further.
+- `MINI_VICO_CONFIG_PATH`
+- `MIMO_PROVIDER_PROFILE`
 
 ---
 
-## Common beginner questions
+## FAQ
 
-### What do I actually need to configure?
+### Which files do I actually edit?
 
-At minimum, you usually need:
+Usually just these:
 
-- a TTS service URL
-- an API key, if required
-- a model name
-- a Telegram bot token
-- a default chat id, if you want one
-- the OpenClaw service base URL
+- `~/.openclaw/.env`
+- `~/.openclaw/mini-vico.json` (if using mini-vico source)
 
-### I do not know what to put in `model`
+### What is `service-dir`?
 
-That value does not come from MiMo Voice itself. It comes from the backend model service you are calling.
+It is the absolute path to this repository's `service/` directory.
 
-So first confirm:
+### Which model is supported right now?
 
-- that your TTS service is running
-- which model names it exposes
-- which request format it expects
+Currently the supported model path is:
 
-### Where should `api_key` go?
+- **Xiaomi MiMo-V2-TTS**
 
-In principle, it belongs in provider configuration, not scattered across multiple scripts.
+### Which delivery channel is supported right now?
 
-If the current config entry points still feel unclear, start with:
+The main supported path today is:
+
+- **Telegram voice**
+
+---
+
+## Read next only if needed
 
 - [CLI install guide](./cli/README.md)
-- [Service details](./service/SERVICE.md)
-
-### Why does the README still not explain model config deeply enough?
-
-Because the project is still in alpha and earlier docs were more release-oriented than newcomer-oriented.
-
-Fixing that is one of the current priorities.
-
----
-
-## Recommended reading order
-
-If this is your first time here, read in this order:
-
-1. **this README**: understand what the project is for
-2. [CLI install guide](./cli/README.md): get the environment running
-3. [Service details](./service/SERVICE.md): understand the service layer
-4. [Plugin details](./plugin/PLUGIN.md): understand the OpenClaw integration
-5. [Alpha notes](./ALPHA_NOTES.md): understand current limitations
-
----
-
-## Current recommended version
-
-- `mimo-voice-openclaw-cli@0.1.0-alpha.6`
-
----
-
-## More documentation
-
-### For users
-
-- [CLI install guide](./cli/README.md)
-- [CLI 安装与使用说明（中文）](./cli/README.zh-CN.md)
-- [Quick start](./docs/quickstart.md)
-- [Configuration guide](./docs/configuration.md)
-- [OpenClaw integration guide](./docs/openclaw-integration.md)
-- [Example config](./examples/config.example.yaml)
 - [Service details](./service/SERVICE.md)
 - [Plugin details](./plugin/PLUGIN.md)
 - [Alpha notes](./ALPHA_NOTES.md)
-
----
-
-## A note for alpha users
-
-The docs are now moving toward a more newcomer-friendly structure, but the project itself is still alpha.
-
-The realistic expectation today is:
-
-- first make Telegram + OpenClaw work
-- then normalize model configuration
-- then continue toward a cleaner multi-channel architecture
