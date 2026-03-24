@@ -14,6 +14,10 @@ __pycache__/
 
 # Generated data
 service/data/
+service/app/data/
+
+# Python cache outside top-level package ignore
+service/__pycache__/
 
 # Node
 node_modules/

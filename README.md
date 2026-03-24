@@ -357,6 +357,7 @@ If this is your first time here, read in this order:
 - [Quick start](./docs/quickstart.md)
 - [Configuration guide](./docs/configuration.md)
 - [OpenClaw integration guide](./docs/openclaw-integration.md)
+- [Release privacy checklist](./docs/release-privacy-checklist.md)
 - [Example config](./examples/config.example.yaml)
 - [Service details](./service/SERVICE.md)
 - [Plugin details](./plugin/PLUGIN.md)

@@ -357,6 +357,7 @@ OpenClaw 插件，负责：
 - [快速开始（英文）](./docs/quickstart.md)
 - [配置说明（英文）](./docs/configuration.md)
 - [OpenClaw 接入说明（英文）](./docs/openclaw-integration.md)
+- [发布前隐私检查清单（英文）](./docs/release-privacy-checklist.md)
 - [示例配置](./examples/config.example.yaml)
 - [Service 说明](./service/SERVICE.zh-CN.md)
 - [Plugin 说明](./plugin/PLUGIN.zh-CN.md)
