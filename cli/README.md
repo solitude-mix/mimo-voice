@@ -14,7 +14,7 @@ If you are new to this project, this document should be your first operational g
 
 Current version:
 
-- `0.1.0-alpha.6`
+- `0.1.0-alpha.7`
 
 ---
 
@@ -110,7 +110,7 @@ brew install ffmpeg
 The most reliable path right now is a global install:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.6
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
 ```
 
 After that, you can run:
@@ -287,13 +287,13 @@ Some npm / npx versions do not reliably expose the package bin for one-shot remo
 Because of that, this style may fail on some machines:
 
 ```bash
-npx mimo-voice-openclaw-cli@0.1.0-alpha.6 doctor
+npx mimo-voice-openclaw-cli@0.1.0-alpha.7 doctor
 ```
 
 If you want a stable and reproducible path, prefer global install:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.6
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
 ```
 
 ---

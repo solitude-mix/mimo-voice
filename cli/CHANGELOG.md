@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.7
+
+- rewrite README files for direct newcomer onboarding
+- clarify Xiaomi MiMo-V2-TTS positioning
+- clarify the meaning of `MIMO_PROVIDER_SOURCE`
+
 ## 0.1.0-alpha.6
 
 - include post-alpha.5 follow-up fixes and doc cleanup
