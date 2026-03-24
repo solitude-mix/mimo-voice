@@ -81,6 +81,11 @@ function checkProviderSourceEnv() {
   };
 }
 
+function expandUserPath(p) {
+  if (!p) return p;
+  return p.startsWith('~') ? path.join(process.env.HOME || '', p.slice(1)) : p;
+}
+
 function checkMiniVicoConfigPath() {
   const source = (loadEnvValue('MIMO_PROVIDER_SOURCE') || 'direct').trim().toLowerCase();
   if (!(source === 'mini-vico' || source === 'mini_vico')) {
@@ -90,15 +95,95 @@ function checkMiniVicoConfigPath() {
   if (!configPath) {
     return { ok: false, detail: 'MINI_VICO_CONFIG_PATH is required when MIMO_PROVIDER_SOURCE=mini-vico' };
   }
-  const expanded = configPath.startsWith('~')
-    ? path.join(process.env.HOME || '', configPath.slice(1))
-    : configPath;
+  const expanded = expandUserPath(configPath);
   return {
     ok: fs.existsSync(expanded),
     detail: fs.existsSync(expanded)
       ? `mini-vico config file found: ${expanded}`
       : `mini-vico config file not found: ${expanded}`,
   };
+}
+
+function ensureObject(value, label) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error(`${label} must be an object`);
+  }
+  return value;
+}
+
+function firstPresent(mapping, keys) {
+  for (const key of keys) {
+    if (mapping[key] !== undefined && mapping[key] !== null && mapping[key] !== '') {
+      return mapping[key];
+    }
+  }
+  return null;
+}
+
+function resolveMiniVicoProfileBlock(data, profile) {
+  if (data.profiles && typeof data.profiles === 'object' && !Array.isArray(data.profiles) && data.profiles[profile]) {
+    return ensureObject(data.profiles[profile], `mini-vico profile '${profile}'`);
+  }
+  for (const containerKey of ['mini_vico', 'mini-vico', 'provider', 'mimo']) {
+    const container = data[containerKey];
+    if (container && typeof container === 'object' && !Array.isArray(container)) {
+      if (container.profiles && typeof container.profiles === 'object' && !Array.isArray(container.profiles) && container.profiles[profile]) {
+        return ensureObject(container.profiles[profile], `mini-vico profile '${profile}'`);
+      }
+      if (profile === 'default') {
+        return ensureObject(container, `mini-vico container '${containerKey}'`);
+      }
+    }
+  }
+  if (profile === 'default') return ensureObject(data, 'mini-vico config root');
+  throw new Error(`mini-vico profile '${profile}' not found`);
+}
+
+function checkMiniVicoConfigContent() {
+  const source = (loadEnvValue('MIMO_PROVIDER_SOURCE') || 'direct').trim().toLowerCase();
+  if (!(source === 'mini-vico' || source === 'mini_vico')) {
+    return { ok: true, detail: 'mini-vico config content check skipped (provider source is not mini-vico)' };
+  }
+
+  const configPath = loadEnvValue('MINI_VICO_CONFIG_PATH');
+  if (!configPath) {
+    return { ok: false, detail: 'mini-vico config content check failed because MINI_VICO_CONFIG_PATH is missing' };
+  }
+
+  const expanded = expandUserPath(configPath);
+  if (!fs.existsSync(expanded)) {
+    return { ok: false, detail: `mini-vico config content check failed because file does not exist: ${expanded}` };
+  }
+
+  const suffix = path.extname(expanded).toLowerCase();
+  if (suffix !== '.json') {
+    return {
+      ok: true,
+      detail: `mini-vico config content validation currently supports JSON only in doctor; runtime adapter may also support YAML if PyYAML is installed (${expanded})`,
+    };
+  }
+
+  try {
+    const raw = fs.readFileSync(expanded, 'utf8');
+    const parsed = ensureObject(JSON.parse(raw), `mini-vico config ${expanded}`);
+    const profile = loadEnvValue('MIMO_PROVIDER_PROFILE') || 'default';
+    const block = resolveMiniVicoProfileBlock(parsed, profile);
+
+    const baseUrl = firstPresent(block, ['base_url', 'api_url', 'endpoint', 'url']);
+    const model = firstPresent(block, ['model', 'model_name']);
+    const apiKey = firstPresent(block, ['api_key', 'token']) || loadEnvValue('MIMO_API_KEY');
+
+    const missing = [];
+    if (!baseUrl) missing.push('base_url/api_url/endpoint/url');
+    if (!model) missing.push('model/model_name');
+    if (!apiKey) missing.push('api_key/token or MIMO_API_KEY fallback');
+
+    return missing.length
+      ? { ok: false, detail: `mini-vico profile '${profile}' is missing required fields: ${missing.join(', ')}` }
+      : { ok: true, detail: `mini-vico profile '${profile}' looks usable (base_url/model/api_key path resolved)` };
+  } catch (err) {
+    return { ok: false, detail: `mini-vico config content error: ${String(err?.message || err)}` };
+  }
 }
 
 async function checkSystemEnsurePip() {
@@ -291,6 +376,7 @@ export async function runDoctor() {
 
   checks.push({ name: 'provider_source', ...checkProviderSourceEnv() });
   checks.push({ name: 'mini_vico_config_path', ...checkMiniVicoConfigPath() });
+  checks.push({ name: 'mini_vico_config_content', ...checkMiniVicoConfigContent() });
   checks.push({ name: 'provider_api_key', ...checkRequiredEnv('MIMO_API_KEY', 'provider credential (required for direct, optional if mini-vico config embeds api_key)') });
   checks.push({ name: 'provider_api_url', ...checkOptionalEnv('MIMO_API_URL', 'https://api.xiaomimimo.com/v1/chat/completions', 'provider endpoint (used directly when source=direct)') });
   checks.push({ name: 'provider_model', ...checkOptionalEnv('MIMO_MODEL', 'mimo-v2-tts', 'provider model (used directly when source=direct)') });
@@ -354,8 +440,12 @@ export async function runDoctor() {
   if (providerReachCheck?.detail && String(providerReachCheck.detail).includes('HTTP 401')) {
     hints.push('Provider endpoint is reachable but returned HTTP 401. Re-check MIMO_API_KEY and provider auth expectations.');
   }
+  const miniVicoContentCheck = checks.find((item) => item.name === 'mini_vico_config_content');
   if (providerSource !== 'direct') {
     hints.push('Provider source is not direct. Ensure MINI_VICO_CONFIG_PATH points to a valid config file and the selected profile contains base_url/model/(api_key or env fallback).');
+    if (miniVicoContentCheck && miniVicoContentCheck.ok === false) {
+      hints.push(`mini-vico content check failed: ${miniVicoContentCheck.detail}`);
+    }
   }
   if (!telegramReach.ok) {
     hints.push('Telegram API reachability probe failed. Check outbound network access, proxy rules, or Telegram connectivity from this machine.');
