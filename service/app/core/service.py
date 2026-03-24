@@ -7,12 +7,12 @@ import time
 from dataclasses import dataclass
 from typing import Optional
 
-from .audio import ffmpeg_to_ogg
+from ..audio.audio import ffmpeg_to_ogg
 from .config import Settings
 from .errors import ValidationError
 from .file_utils import build_output_path
-from .mimo import MimoClient
-from .telegram import TelegramClient
+from ..providers.mimo import MimoClient
+from ..channels.telegram import TelegramClient
 from .text_utils import split_text_for_tts
 
 

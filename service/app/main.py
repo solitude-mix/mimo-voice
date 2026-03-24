@@ -7,12 +7,12 @@ from uuid import uuid4
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 
-from .config import ConfigError, get_settings
-from .errors import DependencyError, ProviderError, ValidationError
-from .logging_utils import setup_logging
-from .response_utils import error_payload, ok_payload
-from .schemas import TTSRequest, TTSResponse, TelegramVoiceRequest, TelegramVoiceResponse
-from .service import VoiceService
+from .core.config import ConfigError, get_settings
+from .core.errors import DependencyError, ProviderError, ValidationError
+from .core.logging_utils import setup_logging
+from .core.response_utils import error_payload, ok_payload
+from .api.schemas import TTSRequest, TTSResponse, TelegramVoiceRequest, TelegramVoiceResponse
+from .core.service import VoiceService
 
 setup_logging()
 logger = logging.getLogger(__name__)

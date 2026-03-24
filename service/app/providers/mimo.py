@@ -7,7 +7,7 @@ import time
 import urllib.request
 from typing import Optional
 
-from .config import Settings
+from ..core.config import Settings
 
 
 logger = logging.getLogger(__name__)
