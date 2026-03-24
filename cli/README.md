@@ -377,6 +377,8 @@ Checks:
 - provider endpoint reachability
 - Telegram API reachability
 - service status script output
+- pid-file state (including stale pid detection)
+- recent service log tail
 - pip availability inside an existing `.venv`
 - service health
 

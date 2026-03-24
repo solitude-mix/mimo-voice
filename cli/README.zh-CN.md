@@ -377,6 +377,8 @@ mimo-voice-openclaw install
 - provider endpoint 连通性
 - Telegram API 连通性
 - service 状态脚本输出
+- pid 文件状态（包括 stale pid 检测）
+- 最近 service 日志尾部
 - 已存在 `.venv` 的 `pip` 可用性
 - service 健康状态
 

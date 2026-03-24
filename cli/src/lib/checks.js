@@ -15,8 +15,10 @@ export function resolveInstallPaths() {
   const startScript = path.join(serviceDir, 'scripts', 'start.sh');
   const startBgScript = path.join(serviceDir, 'scripts', 'start-bg.sh');
   const statusScript = path.join(serviceDir, 'scripts', 'status.sh');
+  const pidFile = path.join(serviceDir, '.runtime', 'service.pid');
+  const logFile = path.join(serviceDir, '.runtime', 'service.log');
   const healthUrl = process.env.MIMO_VOICE_HEALTH_URL || 'http://127.0.0.1:8091/health';
-  return { serviceDir, pluginSourceDir, venvDir, requirementsFile, startScript, startBgScript, statusScript, healthUrl };
+  return { serviceDir, pluginSourceDir, venvDir, requirementsFile, startScript, startBgScript, statusScript, pidFile, logFile, healthUrl };
 }
 
 async function hasCommand(command, args = ['--version']) {
@@ -95,6 +97,13 @@ async function checkVenvPip(venvDir) {
   }
 }
 
+function tailFile(filePath, maxLines = 20) {
+  if (!fs.existsSync(filePath)) return null;
+  const raw = fs.readFileSync(filePath, 'utf8');
+  const lines = raw.split(/\r?\n/).filter(Boolean);
+  return lines.slice(-maxLines).join('\n');
+}
+
 async function checkUrlReachable(url, { method = 'GET', timeoutMs = 10000 } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -160,6 +169,38 @@ async function checkServiceStatusScript(statusScript, serviceDir) {
   }
 }
 
+function checkPidFileState(pidFile) {
+  if (!fs.existsSync(pidFile)) {
+    return {
+      ok: false,
+      detail: `pid file not found: ${pidFile}`,
+      stale: false,
+    };
+  }
+  const pid = fs.readFileSync(pidFile, 'utf8').trim();
+  if (!pid) {
+    return {
+      ok: false,
+      detail: `pid file empty: ${pidFile}`,
+      stale: true,
+    };
+  }
+  try {
+    process.kill(Number(pid), 0);
+    return {
+      ok: true,
+      detail: `pid file present and process exists: ${pid}`,
+      stale: false,
+    };
+  } catch {
+    return {
+      ok: false,
+      detail: `stale pid file detected: ${pid}`,
+      stale: true,
+    };
+  }
+}
+
 function summarizeDoctorOk(checks) {
   return checks.every((check) => {
     if (check.name === 'service_venv' && check.ok === false) {
@@ -174,7 +215,9 @@ function summarizeDoctorOk(checks) {
       check.name === 'telegram_api_base' ||
       check.name === 'provider_endpoint_reachable' ||
       check.name === 'telegram_api_reachable' ||
-      check.name === 'service_status_script'
+      check.name === 'service_status_script' ||
+      check.name === 'service_pid_state' ||
+      check.name === 'service_log_tail'
     ) {
       return true;
     }
@@ -222,6 +265,9 @@ export async function runDoctor() {
   const serviceStatus = await checkServiceStatusScript(paths.statusScript, paths.serviceDir);
   checks.push({ name: 'service_status_script', ok: serviceStatus.ok, detail: serviceStatus.detail });
 
+  const pidState = checkPidFileState(paths.pidFile);
+  checks.push({ name: 'service_pid_state', ok: pidState.ok, detail: pidState.detail });
+
   const serviceVenvExists = fs.existsSync(paths.venvDir);
   checks.push({
     name: 'service_venv',
@@ -239,5 +285,26 @@ export async function runDoctor() {
   const health = await checkServiceHealth();
   checks.push({ name: 'service_health', ok: health.ok, detail: health.detail || health.url });
 
-  return { ok: summarizeDoctorOk(checks), checks, paths };
+  const logTail = tailFile(paths.logFile, 20);
+  checks.push({
+    name: 'service_log_tail',
+    ok: true,
+    detail: logTail ? `Recent service log tail:\n${logTail}` : `service log not found: ${paths.logFile}`,
+  });
+
+  const hints = [];
+  if (!health.ok && pidState.stale) {
+    hints.push('Service health failed and pid file is stale. Clear .runtime/service.pid or run scripts/stop-bg.sh / restart the service.');
+  }
+  if (!health.ok && serviceStatus.ok === false) {
+    hints.push('Service is not currently running according to scripts/status.sh. Check .runtime/service.log and restart with scripts/start-bg.sh.');
+  }
+  if (providerReach.ok && String(providerReach.detail).includes('HTTP 401')) {
+    hints.push('Provider endpoint is reachable but returned HTTP 401. Re-check MIMO_API_KEY and provider auth expectations.');
+  }
+  if (!telegramReach.ok) {
+    hints.push('Telegram API reachability probe failed. Check outbound network access, proxy rules, or Telegram connectivity from this machine.');
+  }
+
+  return { ok: summarizeDoctorOk(checks), checks, paths, hints };
 }
