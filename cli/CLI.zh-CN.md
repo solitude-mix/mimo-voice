@@ -6,14 +6,14 @@
 
 ## 当前版本
 
-- `0.1.0-alpha.7`
+- `0.1.0-alpha.9`
 
 ## 推荐用法
 
 目前最稳的方式是：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.9
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 mimo-voice-openclaw configure
@@ -54,5 +54,9 @@ node src/index.js configure
 - 在 WSL 环境中请使用 `python3`
 - 安装或启用插件后，建议做一次 gateway 重启
 - 当 `service_health` 已经正常时，`doctor` 会容忍缺失的 `service/.venv`
+- `doctor` 会拒绝 `your_telegram_bot_token` 这类占位 secret
+- service 运行时会优先读取 `~/.openclaw/.env`
+- `install` 会尝试安装 `systemd --user` 的 MiMo service，不可用时回退到后台脚本
+- `configure` 还会自动把 `mimo_voice` 写入顶层 `tools.allow`
 - `upgrade` 当前是刷新安装，不是差异升级
 - `uninstall` 默认保留 Python service 目录和 venv，以避免误删用户数据

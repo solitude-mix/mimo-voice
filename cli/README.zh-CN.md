@@ -14,7 +14,7 @@
 
 当前版本：
 
-- `0.1.0-alpha.7`
+- `0.1.0-alpha.9`
 
 ---
 
@@ -110,7 +110,7 @@ brew install ffmpeg
 目前最稳的方式是全局安装：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.9
 ```
 
 安装后，你就可以直接运行：
@@ -135,6 +135,7 @@ mimo-voice-openclaw doctor
 - `openclaw`
 - `python3 -m venv`
 - `python3 -m ensurepip`
+- 对 `your_telegram_bot_token` 这类占位 secret 的拒绝检查
 - service 路径
 - plugin 路径
 - provider source 选择（`MIMO_PROVIDER_SOURCE`）
@@ -167,6 +168,8 @@ mimo-voice-openclaw install
 - 如果已有 `.venv` 缺少 `pip`，尝试自动修复
 - 安装 Python 依赖
 - 部署 plugin
+- 在可用时尝试安装 `systemd --user` 的 MiMo service
+- 如果用户级 systemd 不可用，则回退到后台脚本启动
 - 验证 service 健康状态
 
 ---
@@ -193,6 +196,11 @@ mimo-voice-openclaw configure --dry-run
 ```bash
 mimo-voice-openclaw configure --clear-default-chat-id
 ```
+
+当前 `configure` 还会额外做这些事：
+
+- 保持 `mimo-voice-openclaw` 位于 `plugins.allow`
+- 自动把 `mimo_voice` 写入顶层 `tools.allow`
 
 ---
 

@@ -52,6 +52,13 @@
 
 在可能的情况下，优先使用安装 CLI 的 `configure` 命令来写配置，而不是手动编辑。
 
+当前 alpha 行为补充：
+
+- `configure` 也会保持插件位于 `plugins.allow`
+- `configure` 也会自动把 `mimo_voice` 写入顶层 `tools.allow`
+- 如果设置了 `defaultChatId`，当前插件还会提供一个首版 B1 Telegram 私聊自动语音路径，用于 `语音：...`、`tts: ...`、`发语音：...` 这类明确前缀
+- 这个 B1 路径仍然是显式触发型 alpha 能力，还不是完整通用自然语言路由层
+
 ## 验证
 
 ```bash

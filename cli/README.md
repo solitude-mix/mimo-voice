@@ -14,7 +14,7 @@ If you are new to this project, this document should be your first operational g
 
 Current version:
 
-- `0.1.0-alpha.7`
+- `0.1.0-alpha.9`
 
 ---
 
@@ -110,7 +110,7 @@ brew install ffmpeg
 The most reliable path right now is a global install:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.9
 ```
 
 After that, you can run:
@@ -135,6 +135,7 @@ mimo-voice-openclaw doctor
 - `openclaw`
 - `python3 -m venv`
 - `python3 -m ensurepip`
+- placeholder-secret rejection for values like `your_telegram_bot_token`
 - service paths
 - plugin paths
 - provider source selection (`MIMO_PROVIDER_SOURCE`)
@@ -167,6 +168,8 @@ The install flow will:
 - try to repair an existing `.venv` if it is missing `pip`
 - install Python dependencies
 - deploy the plugin
+- try to install a `systemd --user` MiMo service when available
+- fall back to the background start script when user systemd is unavailable
 - verify service health
 
 ---
@@ -192,6 +195,11 @@ If you want to clear the default Telegram chat id:
 ```bash
 mimo-voice-openclaw configure --clear-default-chat-id
 ```
+
+The current `configure` flow also:
+
+- keeps `mimo-voice-openclaw` in `plugins.allow`
+- adds `mimo_voice` to top-level `tools.allow`
 
 ---
 

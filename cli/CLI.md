@@ -6,14 +6,14 @@
 
 ## Current version
 
-- `0.1.0-alpha.7`
+- `0.1.0-alpha.9`
 
 ## Recommended usage
 
 The most reliable path is:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.9
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 mimo-voice-openclaw configure
@@ -54,5 +54,9 @@ node src/index.js configure
 - In WSL, use `python3`
 - Restart the gateway after installation when needed
 - `doctor` tolerates a missing `service/.venv` when `service_health` is already OK
+- `doctor` rejects placeholder secrets like `your_telegram_bot_token`
+- the service runtime prefers `~/.openclaw/.env` over inherited outer environment values
+- `install` tries to install a `systemd --user` MiMo service, with background fallback when unavailable
+- `configure` also adds `mimo_voice` to top-level `tools.allow`
 - `upgrade` currently behaves like a refresh install
 - `uninstall` keeps the Python service directory and venv by default to avoid accidental data loss

@@ -3,7 +3,7 @@
 [中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
 
 当前推荐版本：
-- `mimo-voice-openclaw-cli@0.1.0-alpha.7`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.9`
 
 这份说明面向想试用当前 alpha 版本的用户。
 
@@ -24,7 +24,7 @@
 目前最稳的方式，是先全局安装 CLI：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.9
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 mimo-voice-openclaw configure
@@ -42,6 +42,11 @@ openclaw mimo-voice status
 ## 当前 alpha 说明
 
 - 当 `service_health` 已经正常时，`doctor` 会容忍缺失的 `service/.venv`
+- `doctor` 会把 `your_telegram_bot_token` 这类占位 secret 视为错误，而不是误判为已配置
+- service 运行时会优先使用 `~/.openclaw/.env`，只在文件未定义变量时才回退到继承环境
+- `install` 会优先尝试安装 `systemd --user` 的 MiMo service，不可用时回退到后台脚本启动
+- `install` / `configure` 会自动把 `mimo_voice` 写入顶层 `tools.allow`
+- 插件增加了首个 B1 显式触发自动语音路径：Telegram 私聊中使用 `语音：...`、`tts: ...`、`发语音：...` 等前缀时可直接触发语音发送
 - 某些 npm / npx 版本在一次性远程执行时，可能不会稳定暴露 CLI 的 bin 命令
 - 因此当前推荐使用全局安装路径
 - `upgrade` 目前更像刷新安装，而不是差异升级
@@ -67,5 +72,5 @@ openclaw mimo-voice status
 这些更适合维护者，而不是普通用户：
 - `docs/release-privacy-checklist.md`
 - `ARCHITECTURE_PLAN.zh-CN.md`
-- `RELEASE_ALPHA_0.1.0-alpha.7.md`
-- `GITHUB_RELEASE_0.1.0-alpha.7.md`
+- `RELEASE_ALPHA_0.1.0-alpha.9.md`
+- `GITHUB_RELEASE_0.1.0-alpha.9.md`

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.9
+
+- align CLI-facing docs with the alpha.8 runtime and install behavior changes
+- document placeholder-secret rejection and `~/.openclaw/.env` precedence more explicitly in CLI docs
+- document `systemd --user` install behavior and automatic `tools.allow` wiring in CLI docs
+- align Chinese alpha/plugin/service docs with the current alpha behavior
+
 ## 0.1.0-alpha.8
 
 - prefer `~/.openclaw/.env` over inherited outer environment values for MiMo service runtime config

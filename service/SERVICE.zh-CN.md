@@ -64,6 +64,11 @@ TELEGRAM_API_BASE=https://api.telegram.org
 
 当前 alpha 代码会从进程环境变量或 `~/.openclaw/.env` 读取这些值。
 
+当前优先级行为：
+- 优先读取 `~/.openclaw/.env`
+- 只有当文件里没有定义时，才回退到继承的进程环境变量
+- 对 `your_telegram_bot_token`、`your_mimo_api_key` 这类占位 secret 会直接报错
+
 在更完整的统一配置文件落地前，这就是当前 provider 配置入口。
 
 当前状态说明：
@@ -100,6 +105,10 @@ bash scripts/start-bg.sh
 bash scripts/status.sh
 bash scripts/stop-bg.sh
 ```
+
+安装器管理的运行时说明：
+- 当前安装器会优先尝试安装 `systemd --user` 的 MiMo service
+- 如果 `systemctl --user` 不可用，则回退到 `start-bg.sh`
 
 runtime 行为说明：
 - `start-bg.sh` 在启动前会自动清理 stale pid 文件
