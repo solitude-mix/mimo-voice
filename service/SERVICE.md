@@ -66,6 +66,11 @@ Planned source-skeleton environment variables (recognized as skeleton only, not 
 
 Current alpha code reads these values from process env or `~/.openclaw/.env`.
 
+Current precedence behavior:
+- prefer values from `~/.openclaw/.env`
+- fall back to inherited process env only when the file does not define that variable
+- reject placeholder secret values like `your_telegram_bot_token` and `your_mimo_api_key`
+
 This is the current provider config entry point before a fuller normalized config file is introduced.
 
 Current state:
@@ -102,6 +107,10 @@ bash scripts/start-bg.sh
 bash scripts/status.sh
 bash scripts/stop-bg.sh
 ```
+
+Installer-managed runtime note:
+- the current installer tries to install a `systemd --user` service for MiMo
+- if `systemctl --user` is unavailable, it falls back to `start-bg.sh`
 
 Runtime behavior notes:
 - `start-bg.sh` removes a stale pid file automatically before starting

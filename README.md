@@ -74,7 +74,7 @@ brew install ffmpeg
 ### Step 2: install the CLI
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.8
 ```
 
 ---
@@ -147,6 +147,12 @@ mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 ```
 
+What changed in the current alpha:
+
+- `doctor` rejects placeholder secrets like `your_telegram_bot_token` instead of treating them as valid
+- the service runtime prefers `~/.openclaw/.env` over inherited outer environment values
+- `install` tries to install a `systemd --user` service for MiMo when available, with background-script fallback when it is not
+
 ---
 
 ### Step 5: connect OpenClaw to the service
@@ -188,6 +194,14 @@ What `configure` now also does:
 - automatically adds `mimo_voice` to top-level `tools.allow`
 
 This matters on newer OpenClaw versions, where plugin tools can exist but still be blocked unless explicitly allowed.
+
+If you also set `defaultChatId`, the current alpha plugin can additionally try a first B1 "auto voice" path for explicit Telegram DM prefixes like:
+
+- `语音：你好`
+- `tts: hello`
+- `发语音：晚点回你`
+
+Treat this B1 path as an explicit-trigger alpha feature, not as fully general natural-language intent routing yet.
 
 ---
 

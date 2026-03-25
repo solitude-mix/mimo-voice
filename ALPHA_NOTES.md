@@ -3,7 +3,7 @@
 [中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
 
 Recommended version:
-- `mimo-voice-openclaw-cli@0.1.0-alpha.7`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.8`
 
 This file is for people who want to try the current alpha release.
 
@@ -41,7 +41,11 @@ If commands do not appear immediately after installation, restart the gateway an
 
 ## Current alpha notes
 
-- `doctor` now tolerates a missing `service/.venv` when `service_health` is already OK
+- `doctor` now rejects placeholder secrets like `your_telegram_bot_token` instead of treating them as valid config
+- the service runtime now prefers `~/.openclaw/.env` over inherited outer environment values
+- `install` now tries to install a `systemd --user` MiMo service and falls back to the background script when user systemd is unavailable
+- `install` / `configure` now add `mimo_voice` to `tools.allow`
+- the plugin now includes a first B1 explicit-trigger auto-voice path for Telegram DM prefixes like `语音：...`, `tts: ...`, and `发语音：...`
 - some npm / npx versions may fail to expose the CLI bin during one-shot remote execution
 - for that reason, global install is the recommended usage path
 - `upgrade` currently behaves like a refresh install
@@ -67,5 +71,5 @@ If something fails, these outputs are useful:
 These are useful for maintainers, not typical end users:
 - `docs/release-privacy-checklist.md`
 - `ARCHITECTURE_PLAN.zh-CN.md`
-- `RELEASE_ALPHA_0.1.0-alpha.7.md`
-- `GITHUB_RELEASE_0.1.0-alpha.7.md`
+- `RELEASE_ALPHA_0.1.0-alpha.8.md`
+- `GITHUB_RELEASE_0.1.0-alpha.8.md`

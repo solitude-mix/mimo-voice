@@ -52,6 +52,13 @@ Common config fields:
 
 Use the installer CLI `configure` command instead of editing the config manually when possible.
 
+Current alpha behavior notes:
+
+- `configure` also keeps the plugin in `plugins.allow`
+- `configure` also adds `mimo_voice` to top-level `tools.allow`
+- if `defaultChatId` is configured, the plugin now includes a first B1 Telegram DM auto-voice path for explicit prefixes like `语音：...`, `tts: ...`, and `发语音：...`
+- treat that B1 path as explicit-trigger alpha behavior, not a full natural-language routing layer yet
+
 ## Verify
 
 ```bash

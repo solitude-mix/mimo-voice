@@ -54,6 +54,7 @@ Current documented plugin config fields:
 - `serviceBaseUrl`
 - `serviceDir`
 - `defaultChatId`
+- `defaultChannel`
 - `preferCli`
 
 ### C. Install/configure CLI
@@ -77,7 +78,7 @@ A practical current path looks like this:
 ### Step 1: install the CLI
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.8
 ```
 
 ### Step 2: check prerequisites
@@ -91,6 +92,11 @@ mimo-voice-openclaw doctor
 ```bash
 mimo-voice-openclaw install
 ```
+
+Current alpha notes for this step:
+- `install` tries to install a `systemd --user` MiMo service when available
+- if user systemd is unavailable, it falls back to the background script path
+- install/configure also add `mimo_voice` to top-level `tools.allow`
 
 ### Step 4: write plugin config
 
@@ -138,6 +144,7 @@ Current example:
 - `serviceDir`: local path to the service directory when needed by install or fallback paths
 - `preferCli`: whether CLI-based behavior should be preferred over service-first behavior
 - `defaultChatId`: optional default Telegram destination
+- `defaultChannel`: current delivery channel default (today still effectively Telegram)
 
 ---
 

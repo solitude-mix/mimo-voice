@@ -78,7 +78,7 @@ brew install ffmpeg
 ### 第 2 步：安装 CLI
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.8
 ```
 
 ---
@@ -151,6 +151,12 @@ mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 ```
 
+当前 alpha 新增说明：
+
+- `doctor` 会把 `your_telegram_bot_token` 这类占位值视为错误，而不是误判为已配置
+- service 运行时会优先读取 `~/.openclaw/.env`，避免吃到外层继承环境里的错误值
+- `install` 会在可用时尝试安装 `systemd --user` 的 MiMo service；如果不可用则自动回退到后台脚本启动
+
 ---
 
 ### 第 5 步：把 OpenClaw 接上 service
@@ -201,6 +207,14 @@ openclaw mimo-voice status
 ```
 
 如果命令没有马上出现，先重启 gateway 再试。
+
+如果你同时配置了 `defaultChatId`，当前 alpha 里的插件还会额外尝试一个首版 B1 自动语音路径：在 Telegram 私聊里使用明确前缀时，直接触发语音发送，例如：
+
+- `语音：你好`
+- `tts: hello`
+- `发语音：晚点回你`
+
+这仍然是显式触发型 alpha 功能，还不是完整的通用自然语言意图路由。
 
 ---
 
