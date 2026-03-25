@@ -4,7 +4,8 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { OPENCLAW_CONFIG, OPENCLAW_HOME, PACKAGED_SERVICE_DIR } from '../lib/paths.js';
 import { checkServiceHealth, resolveInstallPaths, runDoctor } from '../lib/checks.js';
-import { loadOpenClawConfig, setPluginAllow, setPluginEnabled, setPluginInstallRecord, writeOpenClawConfig } from '../lib/openclaw-config.js';
+import { TOOL_NAME, loadOpenClawConfig, setPluginAllow, setPluginEnabled, setPluginInstallRecord, setToolAllow, writeOpenClawConfig } from '../lib/openclaw-config.js';
+import { installOrUpdateUserService } from '../lib/systemd.js';
 
 const execFileAsync = promisify(execFile);
 const PLUGIN_ID = 'mimo-voice-openclaw';
@@ -57,6 +58,7 @@ function recordPluginInstall(paths, steps, mode) {
   const cfg = loaded.data;
   setPluginAllow(cfg, true);
   setPluginEnabled(cfg, true);
+  setToolAllow(cfg, true, TOOL_NAME);
   const installPath = getInstalledPluginDir();
   setPluginInstallRecord(cfg, {
     source: mode === 'npm' ? 'npm' : 'path',
@@ -69,7 +71,7 @@ function recordPluginInstall(paths, steps, mode) {
     installedAt: new Date().toISOString(),
   });
   const result = writeOpenClawConfig(cfg, { dryRun: false });
-  steps.push({ step: 'plugins_record_install', ok: true, detail: result.changed ? `Recorded ${PLUGIN_ID} install provenance (${mode})` : `Install provenance already up to date for ${PLUGIN_ID}` });
+  steps.push({ step: 'plugins_record_install', ok: true, detail: result.changed ? `Recorded ${PLUGIN_ID} install provenance (${mode}) and ensured tools.allow includes ${TOOL_NAME}` : `Install provenance already up to date for ${PLUGIN_ID}; tools.allow already includes ${TOOL_NAME}` });
 }
 
 function shouldRecreateVenv(paths) {
@@ -225,18 +227,33 @@ export async function installCommand() {
     }
   }
 
+  let usedSystemd = false;
+  try {
+    const systemdResult = await installOrUpdateUserService({ serviceDir: paths.serviceDir, venvPython });
+    usedSystemd = true;
+    steps.push({ step: 'systemd_user_service', ok: true, detail: `Installed ${systemdResult.serviceName} at ${systemdResult.servicePath} (${systemdResult.detail})` });
+  } catch (err) {
+    steps.push({
+      step: 'systemd_user_service',
+      ok: false,
+      detail: `systemctl --user setup failed, falling back to background script: ${String(err.stderr || err.stdout || err.message || err)}`,
+    });
+  }
+
   const preHealth = await checkServiceHealth();
   if (preHealth.ok) {
     steps.push({ step: 'service_health', ok: true, detail: `Service already healthy at ${paths.healthUrl}: ${preHealth.detail}` });
   } else {
-    try {
-      const startBg = await safeExec('bash', [paths.startBgScript], { cwd: paths.serviceDir });
-      steps.push({ step: 'service_start', ok: true, detail: (startBg.stdout || startBg.stderr || '').trim() || `Started service with ${paths.startBgScript}` });
-    } catch (err) {
-      steps.push({ step: 'service_start', ok: false, detail: String(err.stderr || err.stdout || err.message || err) });
-      console.log(JSON.stringify({ ok: false, steps }, null, 2));
-      process.exitCode = 1;
-      return;
+    if (!usedSystemd) {
+      try {
+        const startBg = await safeExec('bash', [paths.startBgScript], { cwd: paths.serviceDir });
+        steps.push({ step: 'service_start', ok: true, detail: (startBg.stdout || startBg.stderr || '').trim() || `Started service with ${paths.startBgScript}` });
+      } catch (err) {
+        steps.push({ step: 'service_start', ok: false, detail: String(err.stderr || err.stdout || err.message || err) });
+        console.log(JSON.stringify({ ok: false, steps }, null, 2));
+        process.exitCode = 1;
+        return;
+      }
     }
 
     let healthResult = { ok: false, detail: '', url: paths.healthUrl };
@@ -262,6 +279,7 @@ export async function installCommand() {
   steps.push({ step: 'next', ok: true, detail: `Review ${OPENCLAW_CONFIG} and ensure plugins.entries.mimo-voice-openclaw.config has the right serviceBaseUrl/serviceDir/defaultChatId.` });
   steps.push({ step: 'next', ok: true, detail: 'You can verify the final setup with: openclaw mimo-voice status' });
   steps.push({ step: 'next', ok: true, detail: `If needed, manual foreground start remains: bash ${paths.startScript}` });
+  steps.push({ step: 'next', ok: true, detail: usedSystemd ? 'MiMo service is now managed by systemd --user and should survive OpenClaw gateway restarts.' : 'systemd --user was unavailable, so the install fell back to the background start script.' });
   steps.push({ step: 'next', ok: true, detail: 'This install flow now assumes packaged service/plugin assets can ship with the npm package.' });
 
   console.log(JSON.stringify({ ok: true, steps }, null, 2));

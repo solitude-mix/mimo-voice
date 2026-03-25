@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import { OPENCLAW_CONFIG } from './paths.js';
 
 export const PLUGIN_ID = 'mimo-voice-openclaw';
+export const TOOL_NAME = 'mimo_voice';
 
 function sha256(text) {
   return crypto.createHash('sha256').update(text).digest('hex');
@@ -67,11 +68,21 @@ export function setPluginInstallRecord(cfg, record) {
   cfg.plugins.installs[PLUGIN_ID] = record;
 }
 
+export function setToolAllow(cfg, enabled, toolName = TOOL_NAME) {
+  cfg.tools ??= {};
+  cfg.tools.allow ??= [];
+  const allow = new Set(cfg.tools.allow || []);
+  if (enabled) allow.add(toolName);
+  else allow.delete(toolName);
+  cfg.tools.allow = [...allow];
+}
+
 export function removePluginConfigState(cfg) {
   ensurePluginContainers(cfg);
   delete cfg.plugins.entries?.[PLUGIN_ID];
   delete cfg.plugins.installs?.[PLUGIN_ID];
   setPluginAllow(cfg, false);
+  setToolAllow(cfg, false);
 }
 
 export function writeOpenClawConfig(cfg, { dryRun = false } = {}) {

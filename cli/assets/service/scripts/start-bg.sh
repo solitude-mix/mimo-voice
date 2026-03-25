@@ -2,6 +2,13 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p .runtime
+ENV_FILE="$HOME/.openclaw/.env"
+if [ -f "$ENV_FILE" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+  set +a
+fi
 VENV_PY="$(pwd)/.venv/bin/python3"
 PID_FILE=.runtime/service.pid
 LOG_FILE=.runtime/service.log

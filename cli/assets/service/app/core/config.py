@@ -18,16 +18,48 @@ class ConfigError(RuntimeError):
     pass
 
 
-def load_env_value(name: str) -> Optional[str]:
-    value = os.environ.get(name)
-    if value and value.strip():
-        return value.strip()
+PLACEHOLDER_ENV_VALUES = {
+    "your_telegram_bot_token",
+    "your_mimo_api_key",
+    "your_api_key",
+    "changeme",
+}
 
-    if ENV_PATH.exists():
-        txt = ENV_PATH.read_text(encoding="utf-8", errors="ignore")
-        match = re.search(rf"^\s*{re.escape(name)}\s*=\s*(.+?)\s*$", txt, re.M)
-        if match:
-            return match.group(1).strip().strip('"').strip("'")
+
+def _read_env_file_value(name: str) -> Optional[str]:
+    if not ENV_PATH.exists():
+        return None
+    txt = ENV_PATH.read_text(encoding="utf-8", errors="ignore")
+    match = re.search(rf"^\s*{re.escape(name)}\s*=\s*(.+?)\s*$", txt, re.M)
+    if not match:
+        return None
+    return match.group(1).strip().strip('"').strip("'")
+
+
+
+def _validate_secret_value(name: str, value: Optional[str]) -> Optional[str]:
+    if value is None:
+        return None
+    normalized = value.strip()
+    if not normalized:
+        return None
+    if normalized.lower() in PLACEHOLDER_ENV_VALUES:
+        raise ConfigError(
+            f"Invalid {name}: placeholder value '{normalized}' is not usable. "
+            f"Set a real value in {ENV_PATH}."
+        )
+    return normalized
+
+
+
+def load_env_value(name: str) -> Optional[str]:
+    file_value = _read_env_file_value(name)
+    if file_value is not None:
+        return _validate_secret_value(name, file_value)
+
+    value = os.environ.get(name)
+    if value is not None:
+        return _validate_secret_value(name, value)
     return None
 
 

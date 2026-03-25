@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.8
+
+- prefer `~/.openclaw/.env` over inherited outer environment values for MiMo service runtime config
+- reject placeholder credentials like `your_telegram_bot_token` in doctor/runtime checks instead of treating them as valid config
+- add `systemd --user` service installation for MiMo Python service with background-script fallback
+- make `install` / `configure` automatically add `mimo_voice` to `tools.allow`
+- add a first B1 auto-voice path in the plugin for Telegram DM prefix triggers such as `语音：...`, `tts: ...`, and `发语音：...`
+
 ## 0.1.0-alpha.7
 
 - rewrite README files for direct newcomer onboarding

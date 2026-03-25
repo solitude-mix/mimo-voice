@@ -30,22 +30,45 @@ async function hasCommand(command, args = ['--version']) {
   }
 }
 
-function loadEnvValue(name) {
-  const direct = process.env[name];
-  if (direct && String(direct).trim()) return String(direct).trim();
+const PLACEHOLDER_ENV_VALUES = new Set([
+  'your_telegram_bot_token',
+  'your_mimo_api_key',
+  'your_api_key',
+  'changeme',
+]);
+
+function normalizeEnvValue(value) {
+  const trimmed = String(value || '').trim().replace(/^['"]|['"]$/g, '');
+  return trimmed || null;
+}
+
+function isPlaceholderEnvValue(value) {
+  return value ? PLACEHOLDER_ENV_VALUES.has(String(value).trim().toLowerCase()) : false;
+}
+
+function readEnvFileValue(name) {
   if (!OPENCLAW_ENV_PATH || !fs.existsSync(OPENCLAW_ENV_PATH)) return null;
   const raw = fs.readFileSync(OPENCLAW_ENV_PATH, 'utf8');
   const match = raw.match(new RegExp(`^\\s*${name}\\s*=\\s*(.+?)\\s*$`, 'm'));
-  return match ? match[1].trim().replace(/^['"]|['"]$/g, '') : null;
+  return match ? normalizeEnvValue(match[1]) : null;
+}
+
+function loadEnvValue(name) {
+  const fromFile = readEnvFileValue(name);
+  if (fromFile) return fromFile;
+  const direct = normalizeEnvValue(process.env[name]);
+  return direct;
 }
 
 function checkRequiredEnv(name, description) {
   const value = loadEnvValue(name);
   return {
-    ok: Boolean(value),
-    detail: value
-      ? `${name} configured (${description})`
-      : `Missing ${name} (${description}); set it in env or ~/.openclaw/.env`,
+    ok: Boolean(value) && !isPlaceholderEnvValue(value),
+    detail: !value
+      ? `Missing ${name} (${description}); set it in env or ~/.openclaw/.env`
+      : isPlaceholderEnvValue(value)
+        ? `Invalid ${name}: placeholder value '${value}' detected; replace it in ~/.openclaw/.env or the inherited environment`
+        : `${name} configured (${description})`,
   };
 }
 

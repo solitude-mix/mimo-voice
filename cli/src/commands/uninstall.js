@@ -3,7 +3,8 @@ import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { OPENCLAW_HOME } from '../lib/paths.js';
-import { loadOpenClawConfig, removePluginConfigState, setPluginEnabled, writeOpenClawConfig } from '../lib/openclaw-config.js';
+import { TOOL_NAME, loadOpenClawConfig, removePluginConfigState, setPluginEnabled, writeOpenClawConfig } from '../lib/openclaw-config.js';
+import { uninstallUserService } from '../lib/systemd.js';
 
 const execFileAsync = promisify(execFile);
 const PLUGIN_ID = 'mimo-voice-openclaw';
@@ -36,7 +37,7 @@ export async function uninstallCommand() {
     setPluginEnabled(cfg, false);
     removePluginConfigState(cfg);
     const writeResult = writeOpenClawConfig(cfg, { dryRun: false });
-    steps.push({ step: 'config_cleanup', ok: true, detail: writeResult.changed ? `Removed config/install state for ${PLUGIN_ID}` : `No config cleanup needed for ${PLUGIN_ID}` });
+    steps.push({ step: 'config_cleanup', ok: true, detail: writeResult.changed ? `Removed config/install state for ${PLUGIN_ID} and removed ${TOOL_NAME} from tools.allow` : `No config cleanup needed for ${PLUGIN_ID}` });
   } catch (err) {
     steps.push({ step: 'config_cleanup', ok: false, detail: String(err?.message || err) });
   }
@@ -58,6 +59,13 @@ export async function uninstallCommand() {
     }
   } catch (err) {
     steps.push({ step: 'plugin_dir_cleanup', ok: false, detail: String(err?.message || err) });
+  }
+
+  try {
+    const systemd = await uninstallUserService();
+    steps.push({ step: 'systemd_user_service_cleanup', ok: true, detail: `Stopped/removed ${systemd.serviceName} (${systemd.servicePath})` });
+  } catch (err) {
+    steps.push({ step: 'systemd_user_service_cleanup', ok: false, detail: String(err?.message || err) });
   }
 
   steps.push({ step: 'note', ok: true, detail: 'Python service directory and virtual environment are intentionally kept for safety; remove them manually if you want a full purge.' });

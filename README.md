@@ -181,6 +181,14 @@ If you only want to preview changes first:
 mimo-voice-openclaw configure --dry-run
 ```
 
+What `configure` now also does:
+
+- writes `plugins.entries.mimo-voice-openclaw.config`
+- keeps `mimo-voice-openclaw` in `plugins.allow`
+- automatically adds `mimo_voice` to top-level `tools.allow`
+
+This matters on newer OpenClaw versions, where plugin tools can exist but still be blocked unless explicitly allowed.
+
 ---
 
 ### Step 6: verify plugin and service

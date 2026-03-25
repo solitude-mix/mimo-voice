@@ -11,6 +11,11 @@ type PluginConfig = {
   preferCli?: boolean;
 };
 
+type AutoVoiceIntent = {
+  prefix: string;
+  text: string;
+};
+
 type GenerateSpeechParams = {
   text: string;
   voice?: string;
@@ -104,6 +109,35 @@ function runCli(serviceDir: string, args: string[]): Promise<any> {
   });
 }
 
+const AUTO_VOICE_PREFIXES = [
+  '语音:', '语音：',
+  'tts:', 'tts：',
+  '发语音:', '发语音：',
+  '发个语音:', '发个语音：',
+  '用语音说:', '用语音说：',
+  '朗读:', '朗读：',
+  '念一下:', '念一下：',
+  '转语音:', '转语音：',
+] as const;
+
+function parseAutoVoiceIntent(input: unknown): AutoVoiceIntent | null {
+  const raw = String(input || '').trim();
+  if (!raw) return null;
+  for (const prefix of AUTO_VOICE_PREFIXES) {
+    if (raw.startsWith(prefix)) {
+      const text = raw.slice(prefix.length).trim();
+      if (!text) return null;
+      return { prefix, text };
+    }
+  }
+  return null;
+}
+
+function makeConversationKey(channelId?: string, conversationId?: string, accountId?: string): string | null {
+  if (!channelId || !conversationId) return null;
+  return `${channelId}:${accountId || 'default'}:${conversationId}`;
+}
+
 const MimoVoiceToolSchema = {
   type: 'object',
   properties: {
@@ -157,6 +191,8 @@ const mimoVoicePlugin = {
   register(api: any) {
     const config = mimoVoiceConfigSchema.parse(api.pluginConfig);
     const logger = api.logger ?? console;
+    const suppressedOutbound = new Map<string, number>();
+    const SUPPRESS_WINDOW_MS = 15000;
 
     async function checkStatus() {
       const url = `${getServiceBaseUrl(config)}/health`;
@@ -218,6 +254,56 @@ const mimoVoicePlugin = {
             max_chars_per_chunk: params.maxCharsPerChunk ?? 120,
           });
     }
+
+    async function tryAutoVoiceFromInbound(event: any) {
+      const ctx = event?.context || {};
+      const channelId = String(ctx.channelId || '').trim();
+      if (channelId !== 'telegram') return;
+      if (ctx.isGroup || ctx.groupId) return;
+
+      const content = String(ctx.bodyForAgent || ctx.content || ctx.body || '').trim();
+      const intent = parseAutoVoiceIntent(content);
+      if (!intent) return;
+
+      const conversationId = String(ctx.conversationId || '').trim();
+      const chatId = conversationId || config.defaultChatId;
+      if (!chatId) {
+        logger.warn?.('[mimo-voice-openclaw] auto voice trigger matched but no chat id was available');
+        return;
+      }
+
+      await deliverVoice({
+        channel: 'telegram',
+        chatId: String(chatId),
+        text: intent.text,
+      });
+
+      const key = makeConversationKey(channelId, conversationId || String(chatId), ctx.accountId ? String(ctx.accountId) : undefined);
+      if (key) suppressedOutbound.set(key, Date.now() + SUPPRESS_WINDOW_MS);
+      logger.info?.(`[mimo-voice-openclaw] auto voice delivered via prefix '${intent.prefix}' to chat ${chatId}`);
+    }
+
+    api.registerHook(['message:received', 'message:preprocessed'], async (event: any) => {
+      try {
+        await tryAutoVoiceFromInbound(event);
+      } catch (err: any) {
+        logger.warn?.(`[mimo-voice-openclaw] auto voice hook failed: ${err?.message || String(err)}`);
+      }
+    }, { name: 'mimo-auto-voice-inbound' });
+
+    api.on('message_sending', (event: any, ctx: any) => {
+      const key = makeConversationKey(ctx?.channelId, ctx?.conversationId, ctx?.accountId);
+      if (!key) return;
+      const until = suppressedOutbound.get(key);
+      if (!until) return;
+      if (Date.now() > until) {
+        suppressedOutbound.delete(key);
+        return;
+      }
+      suppressedOutbound.delete(key);
+      logger.info?.(`[mimo-voice-openclaw] suppressed normal outbound text after auto voice delivery for ${key}`);
+      return { cancel: true };
+    });
 
     api.registerGatewayMethod('mimoVoice.status', async ({ respond }: any) => {
       try {
