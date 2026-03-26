@@ -14,12 +14,19 @@ type PluginConfig = {
 type AutoVoiceIntent = {
   prefix: string;
   text: string;
+  style?: string;
+  emotion?: string;
+  dialect?: string;
 };
 
 type GenerateSpeechParams = {
   text: string;
   voice?: string;
   userPrompt?: string;
+  style?: string;
+  emotion?: string;
+  dialect?: string;
+  noStyleTag?: boolean;
   splitLongText?: boolean;
   maxCharsPerChunk?: number;
   saveFile?: boolean;
@@ -34,6 +41,7 @@ type DeliverVoiceParams = {
   style?: string;
   emotion?: string;
   dialect?: string;
+  noStyleTag?: boolean;
   keepFile?: boolean;
   splitLongText?: boolean;
   maxCharsPerChunk?: number;
@@ -120,17 +128,97 @@ const AUTO_VOICE_PREFIXES = [
   '转语音:', '转语音：',
 ] as const;
 
+const NATURAL_VOICE_TRIGGER_RE = /^(?:请|麻烦|帮我|可以|能不能|可不可以|请你|麻烦你)?(?:用|以)?(?:语音|声音|音频)(?:回复|回我|发我|说|讲|念|朗读|播报|发送)?/;
+const VOICE_REQUEST_HINT_RE = /(?:语音|声音|音频).{0,10}(?:回复|回我|发我|说|讲|念|朗读|播报|发送)|(?:回复|回我|发我).{0,6}(?:语音|声音|音频)|(?:用|以).{0,8}(?:语音|声音|音频)/;
+
+function normalizeAutoVoiceText(text: string): string {
+  return text
+    .replace(/^[:：,，\s]+/, '')
+    .replace(/[。！!\s]+$/u, '')
+    .trim();
+}
+
+function extractQuotedOrColonText(raw: string): string | null {
+  const colonMatch = raw.match(/[：:](.+)$/s);
+  if (colonMatch?.[1]?.trim()) return normalizeAutoVoiceText(colonMatch[1]);
+
+  const quoted = raw.match(/[“"『「](.+?)[”"』」]/s);
+  if (quoted?.[1]?.trim()) return normalizeAutoVoiceText(quoted[1]);
+  return null;
+}
+
+function detectDialect(raw: string): string | undefined {
+  if (/(?:粤语|广东话|白话)/.test(raw)) return '粤语';
+  if (/(?:四川话|川话)/.test(raw)) return '四川话';
+  if (/(?:东北话)/.test(raw)) return '东北话';
+  if (/(?:上海话|沪语)/.test(raw)) return '上海话';
+  if (/(?:闽南话|台语|臺語)/.test(raw)) return '闽南话';
+  return undefined;
+}
+
+function detectEmotion(raw: string): string | undefined {
+  if (/(?:开心|高兴|活泼|欢快|歡快)/.test(raw)) return '开心';
+  if (/(?:难过|伤心|悲伤|忧伤)/.test(raw)) return '难过';
+  if (/(?:温柔|温柔一点|柔和)/.test(raw)) return '温柔';
+  if (/(?:严肃|正式|认真)/.test(raw)) return '严肃';
+  if (/(?:紧张)/.test(raw)) return '紧张';
+  return undefined;
+}
+
+function detectStyle(raw: string): string | undefined {
+  const matched: string[] = [];
+  if (/(?:可爱)/.test(raw)) matched.push('可爱');
+  if (/(?:小声|轻声|悄悄|低声)/.test(raw)) matched.push('小声');
+  if (/(?:慢一点|慢速|慢慢说)/.test(raw)) matched.push('慢速');
+  if (/(?:快一点|快点|快速)/.test(raw)) matched.push('快速');
+  if (/(?:男声)/.test(raw)) matched.push('男声');
+  if (/(?:女声)/.test(raw)) matched.push('女声');
+  return matched.length ? matched.join(' ') : undefined;
+}
+
+function stripRequestFraming(raw: string): string {
+  return normalizeAutoVoiceText(
+    raw
+      .replace(NATURAL_VOICE_TRIGGER_RE, '')
+      .replace(/^(?:请|麻烦|帮我|可以|能不能|可不可以|请你|麻烦你)/, '')
+      .replace(/^(?:用|以)(?:[^，。,：:]{0,12})(?:语音|声音|音频)(?:的方式)?/, '')
+      .replace(/^(?:回复|回我|发我|说|讲|念|朗读|播报|发送)(?:一段|一句|一下|给我|给我一句|给我一段)?/, '')
+      .replace(/^(?:内容是|内容为|这句|这段)/, '')
+  );
+}
+
 function parseAutoVoiceIntent(input: unknown): AutoVoiceIntent | null {
   const raw = String(input || '').trim();
   if (!raw) return null;
   for (const prefix of AUTO_VOICE_PREFIXES) {
     if (raw.startsWith(prefix)) {
-      const text = raw.slice(prefix.length).trim();
+      const text = normalizeAutoVoiceText(raw.slice(prefix.length).trim());
       if (!text) return null;
-      return { prefix, text };
+      return {
+        prefix,
+        text,
+        style: detectStyle(raw),
+        emotion: detectEmotion(raw),
+        dialect: detectDialect(raw),
+      };
     }
   }
-  return null;
+
+  if (!VOICE_REQUEST_HINT_RE.test(raw) && !NATURAL_VOICE_TRIGGER_RE.test(raw)) {
+    return null;
+  }
+
+  const explicitText = extractQuotedOrColonText(raw);
+  const text = explicitText || stripRequestFraming(raw);
+  if (!text) return null;
+
+  return {
+    prefix: 'natural-language',
+    text,
+    style: detectStyle(raw),
+    emotion: detectEmotion(raw),
+    dialect: detectDialect(raw),
+  };
 }
 
 function makeConversationKey(channelId?: string, conversationId?: string, accountId?: string): string | null {
@@ -212,6 +300,10 @@ const mimoVoicePlugin = {
             text,
             voice: params.voice || 'default_zh',
             user_prompt: params.userPrompt,
+            style: params.style,
+            emotion: params.emotion,
+            dialect: params.dialect,
+            no_style_tag: params.noStyleTag ?? false,
             save_file: params.saveFile ?? true,
             split_long_text: params.splitLongText ?? true,
             max_chars_per_chunk: params.maxCharsPerChunk ?? 120,
@@ -239,6 +331,7 @@ const mimoVoicePlugin = {
             ...(params.style ? ['--style', params.style] : []),
             ...(params.emotion ? ['--emotion', params.emotion] : []),
             ...(params.dialect ? ['--dialect', params.dialect] : []),
+            ...(params.noStyleTag ? ['--no-style-tag'] : []),
             ...(params.keepFile ? ['--keep-file'] : []),
           ])
         : await postJson(`${getServiceBaseUrl(config)}/telegram/send-voice`, {
@@ -249,6 +342,7 @@ const mimoVoicePlugin = {
             style: params.style,
             emotion: params.emotion,
             dialect: params.dialect,
+            no_style_tag: params.noStyleTag ?? false,
             keep_file: params.keepFile ?? false,
             split_long_text: params.splitLongText ?? true,
             max_chars_per_chunk: params.maxCharsPerChunk ?? 120,
@@ -276,11 +370,14 @@ const mimoVoicePlugin = {
         channel: 'telegram',
         chatId: String(chatId),
         text: intent.text,
+        style: intent.style,
+        emotion: intent.emotion,
+        dialect: intent.dialect,
       });
 
       const key = makeConversationKey(channelId, conversationId || String(chatId), ctx.accountId ? String(ctx.accountId) : undefined);
       if (key) suppressedOutbound.set(key, Date.now() + SUPPRESS_WINDOW_MS);
-      logger.info?.(`[mimo-voice-openclaw] auto voice delivered via prefix '${intent.prefix}' to chat ${chatId}`);
+      logger.info?.(`[mimo-voice-openclaw] auto voice delivered via trigger '${intent.prefix}' to chat ${chatId} (dialect=${intent.dialect || '-'} emotion=${intent.emotion || '-'} style=${intent.style || '-'})`);
     }
 
     api.registerHook(['message:received', 'message:preprocessed'], async (event: any) => {

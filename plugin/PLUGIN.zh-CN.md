@@ -57,6 +57,7 @@
 - `configure` 也会保持插件位于 `plugins.allow`
 - `configure` 也会自动把 `mimo_voice` 写入兼容的顶层 OpenClaw tools 白名单（如果已有 `tools.alsoAllow`，会优先写那里）
 - 如果设置了 `defaultChatId`，当前插件还会提供一个首版 B1 Telegram 私聊自动语音路径，用于 `语音：...`、`tts: ...`、`发语音：...` 这类明确前缀
+- 自动语音路径现在也支持首版自然语言意图识别，例如 `请用粤语语音回复我一句：你好，我是小音。`，并会在调用 MiMo 前尽量提取基础的 `dialect` / `emotion` / `style` 提示
 - 这个 B1 路径仍然是显式触发型 alpha 能力，还不是完整通用自然语言路由层
 
 ## 验证
