@@ -14,7 +14,7 @@
 
 当前版本：
 
-- `0.1.0-alpha.9`
+- `0.1.0-alpha.10`
 
 ---
 
@@ -110,7 +110,7 @@ brew install ffmpeg
 目前最稳的方式是全局安装：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.9
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.10
 ```
 
 安装后，你就可以直接运行：

@@ -3,7 +3,7 @@
 [中文说明](./ALPHA_NOTES.zh-CN.md) | [English](./ALPHA_NOTES.md)
 
 Recommended version:
-- `mimo-voice-openclaw-cli@0.1.0-alpha.8`
+- `mimo-voice-openclaw-cli@0.1.0-alpha.10`
 
 This file is for people who want to try the current alpha release.
 
@@ -24,7 +24,7 @@ The current alpha covers:
 The most reliable path is to install the CLI globally first:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.7
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.10
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 mimo-voice-openclaw configure
@@ -44,8 +44,11 @@ If commands do not appear immediately after installation, restart the gateway an
 - `doctor` now rejects placeholder secrets like `your_telegram_bot_token` instead of treating them as valid config
 - the service runtime now prefers `~/.openclaw/.env` over inherited outer environment values
 - `install` now tries to install a `systemd --user` MiMo service and falls back to the background script when user systemd is unavailable
-- `install` / `configure` now add `mimo_voice` to `tools.allow`
-- the plugin now includes a first B1 explicit-trigger auto-voice path for Telegram DM prefixes like `语音：...`, `tts: ...`, and `发语音：...`
+- `install` / `configure` now add `mimo_voice` to the compatible OpenClaw tools allowlist (prefers `tools.alsoAllow` when present)
+- the installer now attempts to stop stale local listeners already occupying port `8091` before enabling `mimo-voice.service`
+- the generated `systemd --user` unit now reads both `~/.openclaw/.env` and optional `service/.env` overrides for proxy-sensitive setups
+- the plugin now includes both explicit-prefix auto-voice and a first natural-language Telegram DM auto-voice intent pass
+- the `/tts` path now applies `style` / `emotion` / `dialect` / `no_style_tag`, protects inline performance-prefixed text, and includes a conservative short-text Cantonese rewrite path
 - some npm / npx versions may fail to expose the CLI bin during one-shot remote execution
 - for that reason, global install is the recommended usage path
 - `upgrade` currently behaves like a refresh install
@@ -71,5 +74,5 @@ If something fails, these outputs are useful:
 These are useful for maintainers, not typical end users:
 - `docs/release-privacy-checklist.md`
 - `ARCHITECTURE_PLAN.zh-CN.md`
-- `RELEASE_ALPHA_0.1.0-alpha.8.md`
-- `GITHUB_RELEASE_0.1.0-alpha.8.md`
+- `RELEASE_ALPHA_0.1.0-alpha.10.md`
+- `GITHUB_RELEASE_0.1.0-alpha.10.md`

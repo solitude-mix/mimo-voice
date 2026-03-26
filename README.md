@@ -74,7 +74,7 @@ brew install ffmpeg
 ### Step 2: install the CLI
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.8
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.10
 ```
 
 ---

@@ -6,14 +6,14 @@
 
 ## Current version
 
-- `0.1.0-alpha.9`
+- `0.1.0-alpha.10`
 
 ## Recommended usage
 
 The most reliable path is:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.9
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.10
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 mimo-voice-openclaw configure

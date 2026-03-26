@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.0-alpha.10
 
 - fix installer config writes so `mimo_voice` prefers `tools.alsoAllow` when present and no longer creates invalid `tools.allow` + `tools.alsoAllow` combinations
 - stop stale local MiMo/uvicorn listeners on port `8091` before enabling `mimo-voice.service`
@@ -8,6 +8,7 @@
 - add a first natural-language auto-voice intent parser for Telegram DM flows and pass extracted `style` / `emotion` / `dialect` hints through the plugin TTS path
 - make the Python `/tts` path actually apply `style` / `emotion` / `dialect` / `no_style_tag`, avoid double-tagging inline performance text, and add a conservative short-text Cantonese rewrite path
 - add regression documentation and zero-dependency unit tests for the new text-processing behavior
+- update release automation so the npm `latest` dist-tag is promoted alongside the alpha publish
 
 ## 0.1.0-alpha.9
 

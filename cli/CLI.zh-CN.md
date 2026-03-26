@@ -6,14 +6,14 @@
 
 ## 当前版本
 
-- `0.1.0-alpha.9`
+- `0.1.0-alpha.10`
 
 ## 推荐用法
 
 目前最稳的方式是：
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.9
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.10
 mimo-voice-openclaw doctor
 mimo-voice-openclaw install
 mimo-voice-openclaw configure

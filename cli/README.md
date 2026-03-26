@@ -14,7 +14,7 @@ If you are new to this project, this document should be your first operational g
 
 Current version:
 
-- `0.1.0-alpha.9`
+- `0.1.0-alpha.10`
 
 ---
 
@@ -110,7 +110,7 @@ brew install ffmpeg
 The most reliable path right now is a global install:
 
 ```bash
-npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.9
+npm install -g mimo-voice-openclaw-cli@0.1.0-alpha.10
 ```
 
 After that, you can run:
