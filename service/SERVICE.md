@@ -140,10 +140,17 @@ curl -X POST http://127.0.0.1:8091/tts/raw \
   -H 'Content-Type: application/json' \
   -d '{
     "text": "Hello from MiMo Voice.",
-    "voice": "default_zh"
+    "voice": "default_zh",
+    "dialect": "粤语",
+    "style": "开心"
   }' \
   --output /tmp/mimo.wav
 ```
+
+Notes:
+- `/tts` and `/tts/raw` now accept `style`, `emotion`, `dialect`, and `no_style_tag`
+- if the text already starts with an inline performance prefix such as `（小声）...`, the service will avoid auto-prepending another `<style>...</style>` tag
+- a small conservative Cantonese rewrite is applied only for short `粤语/广东话` requests; it is intentionally limited and does not attempt full translation
 
 ### Send Telegram voice
 
