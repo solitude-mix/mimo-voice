@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- fix installer config writes so `mimo_voice` prefers `tools.alsoAllow` when present and no longer creates invalid `tools.allow` + `tools.alsoAllow` combinations
+- stop stale local MiMo/uvicorn listeners on port `8091` before enabling `mimo-voice.service`
+- let the generated `systemd --user` unit read both `~/.openclaw/.env` and optional service-local `.env` overrides, and document proxy settings for Telegram delivery
+
 ## 0.1.0-alpha.9
 
 - align CLI-facing docs with the alpha.8 runtime and install behavior changes

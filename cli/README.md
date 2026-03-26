@@ -199,7 +199,7 @@ mimo-voice-openclaw configure --clear-default-chat-id
 The current `configure` flow also:
 
 - keeps `mimo-voice-openclaw` in `plugins.allow`
-- adds `mimo_voice` to top-level `tools.allow`
+- adds `mimo_voice` to the compatible top-level OpenClaw tools allowlist (prefers `tools.alsoAllow` when present)
 
 ---
 

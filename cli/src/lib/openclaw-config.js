@@ -68,13 +68,40 @@ export function setPluginInstallRecord(cfg, record) {
   cfg.plugins.installs[PLUGIN_ID] = record;
 }
 
+function normalizeToolList(tools, key) {
+  const value = tools[key];
+  if (value == null) {
+    tools[key] = [];
+    return tools[key];
+  }
+  if (!Array.isArray(value)) {
+    throw new Error(`OpenClaw config tools.${key} must be an array when present`);
+  }
+  return value;
+}
+
+function resolveToolListKey(tools) {
+  if (Array.isArray(tools.alsoAllow)) return 'alsoAllow';
+  if (Array.isArray(tools.allow)) return 'allow';
+  if ('profile' in tools) return 'alsoAllow';
+  return 'alsoAllow';
+}
+
 export function setToolAllow(cfg, enabled, toolName = TOOL_NAME) {
   cfg.tools ??= {};
-  cfg.tools.allow ??= [];
-  const allow = new Set(cfg.tools.allow || []);
-  if (enabled) allow.add(toolName);
-  else allow.delete(toolName);
-  cfg.tools.allow = [...allow];
+  const listKey = resolveToolListKey(cfg.tools);
+  const list = new Set(normalizeToolList(cfg.tools, listKey));
+  if (enabled) list.add(toolName);
+  else list.delete(toolName);
+  cfg.tools[listKey] = [...list];
+
+  const otherKey = listKey === 'allow' ? 'alsoAllow' : 'allow';
+  if (Array.isArray(cfg.tools[otherKey]) && cfg.tools[otherKey].includes(toolName)) {
+    cfg.tools[otherKey] = cfg.tools[otherKey].filter((name) => name !== toolName);
+    if (cfg.tools[otherKey].length === 0) {
+      delete cfg.tools[otherKey];
+    }
+  }
 }
 
 export function removePluginConfigState(cfg) {

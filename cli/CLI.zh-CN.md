@@ -57,6 +57,6 @@ node src/index.js configure
 - `doctor` 会拒绝 `your_telegram_bot_token` 这类占位 secret
 - service 运行时会优先读取 `~/.openclaw/.env`
 - `install` 会尝试安装 `systemd --user` 的 MiMo service，不可用时回退到后台脚本
-- `configure` 还会自动把 `mimo_voice` 写入顶层 `tools.allow`
+- `configure` 还会自动把 `mimo_voice` 写入兼容的顶层 OpenClaw tools 白名单（如果已有 `tools.alsoAllow`，会优先写那里）
 - `upgrade` 当前是刷新安装，不是差异升级
 - `uninstall` 默认保留 Python service 目录和 venv，以避免误删用户数据
