@@ -191,17 +191,19 @@ What `configure` now also does:
 
 - writes `plugins.entries.mimo-voice-openclaw.config`
 - keeps `mimo-voice-openclaw` in `plugins.allow`
-- automatically adds `mimo_voice` to top-level `tools.allow`
+- automatically adds `mimo_voice` to the compatible OpenClaw tools allowlist (prefers `tools.alsoAllow` when present)
 
 This matters on newer OpenClaw versions, where plugin tools can exist but still be blocked unless explicitly allowed.
 
-If you also set `defaultChatId`, the current alpha plugin can additionally try a first B1 "auto voice" path for explicit Telegram DM prefixes like:
+If you also set `defaultChatId`, the current alpha plugin can additionally try a first Telegram DM auto-voice path for:
 
-- `语音：你好`
-- `tts: hello`
-- `发语音：晚点回你`
+- explicit prefixes such as `语音：你好`, `tts: hello`, `发语音：晚点回你`
+- simple natural-language requests such as `请用粤语语音回复我一句：你好，我是小音。`
 
-Treat this B1 path as an explicit-trigger alpha feature, not as fully general natural-language intent routing yet.
+Current scope is still intentionally conservative:
+- it extracts only basic `dialect` / `emotion` / `style` hints
+- short `粤语/广东话` requests may get a small built-in rewrite pass for more natural phrasing
+- it is still not a full general-purpose NLU or translation pipeline
 
 ---
 
