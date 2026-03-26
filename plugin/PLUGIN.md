@@ -55,8 +55,9 @@ Use the installer CLI `configure` command instead of editing the config manually
 Current alpha behavior notes:
 
 - `configure` also keeps the plugin in `plugins.allow`
-- `configure` also adds `mimo_voice` to top-level `tools.allow`
+- `configure` also adds `mimo_voice` to the compatible top-level OpenClaw tools allowlist (prefers `tools.alsoAllow` when present)
 - if `defaultChatId` is configured, the plugin now includes a first B1 Telegram DM auto-voice path for explicit prefixes like `语音：...`, `tts: ...`, and `发语音：...`
+- the auto-voice path also supports a first natural-language intent pass for requests like `请用粤语语音回复我一句：你好，我是小音。`, and can extract basic `dialect` / `emotion` / `style` hints before calling MiMo
 - treat that B1 path as explicit-trigger alpha behavior, not a full natural-language routing layer yet
 
 ## Verify

@@ -44,7 +44,7 @@ export function configureOpenClaw({
       clearDefaultChatId ? 'defaultChatId cleared from plugin config' : 'defaultChatId preserved/set when provided',
       clearDefaultChannel ? 'defaultChannel cleared from plugin config' : 'defaultChannel preserved/set when provided',
       'plugin added to plugins.allow to avoid allowlist drift',
-      `tool '${TOOL_NAME}' added to tools.allow for stricter OpenClaw tool policies`,
+      `tool '${TOOL_NAME}' added to the compatible OpenClaw tools allowlist (prefers tools.alsoAllow when present)`,
     ],
   };
 }

@@ -9,6 +9,10 @@ class TTSRequest(BaseModel):
     text: str = Field(..., min_length=1)
     voice: str = Field(default="default_zh")
     user_prompt: Optional[str] = None
+    style: Optional[str] = None
+    emotion: Optional[str] = None
+    dialect: Optional[str] = None
+    no_style_tag: bool = False
     split_long_text: bool = True
     max_chars_per_chunk: int = Field(default=120, ge=20, le=500)
     save_file: bool = False

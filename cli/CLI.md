@@ -57,6 +57,6 @@ node src/index.js configure
 - `doctor` rejects placeholder secrets like `your_telegram_bot_token`
 - the service runtime prefers `~/.openclaw/.env` over inherited outer environment values
 - `install` tries to install a `systemd --user` MiMo service, with background fallback when unavailable
-- `configure` also adds `mimo_voice` to top-level `tools.allow`
+- `configure` also adds `mimo_voice` to the compatible top-level OpenClaw tools allowlist (prefers `tools.alsoAllow` when present)
 - `upgrade` currently behaves like a refresh install
 - `uninstall` keeps the Python service directory and venv by default to avoid accidental data loss

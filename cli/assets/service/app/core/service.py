@@ -28,12 +28,21 @@ class VoiceService:
         text: str,
         voice: str,
         user_prompt: Optional[str] = None,
+        style: Optional[str] = None,
+        emotion: Optional[str] = None,
+        dialect: Optional[str] = None,
+        no_style_tag: bool = False,
         split_long_text: bool = True,
         max_chars_per_chunk: int = 120,
         save_file: bool = False,
     ) -> GeneratedSpeech:
+        from .text_processing import apply_style_tag, apply_dialect_rewrite, merge_style
+
+        merged_style = merge_style(style, emotion, dialect)
+        final_text = apply_dialect_rewrite(text, dialect)
+        final_text = apply_style_tag(final_text, merged_style, no_style_tag)
         return self.speech.generate_speech(
-            text=text,
+            text=final_text,
             voice=voice,
             user_prompt=user_prompt,
             split_long_text=split_long_text,
@@ -94,6 +103,10 @@ class VoiceService:
         text: str,
         voice: str,
         user_prompt: Optional[str] = None,
+        style: Optional[str] = None,
+        emotion: Optional[str] = None,
+        dialect: Optional[str] = None,
+        no_style_tag: bool = False,
         split_long_text: bool = True,
         max_chars_per_chunk: int = 120,
         save_file: bool = False,
@@ -102,6 +115,10 @@ class VoiceService:
             text=text,
             voice=voice,
             user_prompt=user_prompt,
+            style=style,
+            emotion=emotion,
+            dialect=dialect,
+            no_style_tag=no_style_tag,
             split_long_text=split_long_text,
             max_chars_per_chunk=max_chars_per_chunk,
             save_file=save_file,

@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- fix installer config writes so `mimo_voice` prefers `tools.alsoAllow` when present and no longer creates invalid `tools.allow` + `tools.alsoAllow` combinations
+- stop stale local MiMo/uvicorn listeners on port `8091` before enabling `mimo-voice.service`
+- let the generated `systemd --user` unit read both `~/.openclaw/.env` and optional service-local `.env` overrides, and document proxy settings for Telegram delivery
+- add a first natural-language auto-voice intent parser for Telegram DM flows and pass extracted `style` / `emotion` / `dialect` hints through the plugin TTS path
+- make the Python `/tts` path actually apply `style` / `emotion` / `dialect` / `no_style_tag`, avoid double-tagging inline performance text, and add a conservative short-text Cantonese rewrite path
+- add regression documentation and zero-dependency unit tests for the new text-processing behavior
+
 ## 0.1.0-alpha.9
 
 - align CLI-facing docs with the alpha.8 runtime and install behavior changes

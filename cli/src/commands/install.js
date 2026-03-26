@@ -5,7 +5,7 @@ import { promisify } from 'node:util';
 import { OPENCLAW_CONFIG, OPENCLAW_HOME, PACKAGED_SERVICE_DIR } from '../lib/paths.js';
 import { checkServiceHealth, resolveInstallPaths, runDoctor } from '../lib/checks.js';
 import { TOOL_NAME, loadOpenClawConfig, setPluginAllow, setPluginEnabled, setPluginInstallRecord, setToolAllow, writeOpenClawConfig } from '../lib/openclaw-config.js';
-import { installOrUpdateUserService } from '../lib/systemd.js';
+import { installOrUpdateUserService, stopStaleServiceProcesses } from '../lib/systemd.js';
 
 const execFileAsync = promisify(execFile);
 const PLUGIN_ID = 'mimo-voice-openclaw';
@@ -229,9 +229,22 @@ export async function installCommand() {
 
   let usedSystemd = false;
   try {
+    const staleCleanup = await stopStaleServiceProcesses({ port: 8091 });
+    steps.push({
+      step: 'stale_process_cleanup',
+      ok: true,
+      detail: staleCleanup.found.length
+        ? `${staleCleanup.detail}: ${staleCleanup.stopped.map((item) => `${item.command}[${item.pid}]=>${item.result}`).join(', ')}`
+        : staleCleanup.detail,
+    });
+  } catch (err) {
+    steps.push({ step: 'stale_process_cleanup', ok: false, detail: String(err.stderr || err.stdout || err.message || err) });
+  }
+
+  try {
     const systemdResult = await installOrUpdateUserService({ serviceDir: paths.serviceDir, venvPython });
     usedSystemd = true;
-    steps.push({ step: 'systemd_user_service', ok: true, detail: `Installed ${systemdResult.serviceName} at ${systemdResult.servicePath} (${systemdResult.detail})` });
+    steps.push({ step: 'systemd_user_service', ok: true, detail: `Installed ${systemdResult.serviceName} at ${systemdResult.servicePath} (${systemdResult.detail}); env files: ~/.openclaw/.env and optional ${systemdResult.serviceEnvPath}` });
   } catch (err) {
     steps.push({
       step: 'systemd_user_service',

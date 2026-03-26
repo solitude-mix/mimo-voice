@@ -200,7 +200,7 @@ mimo-voice-openclaw configure --clear-default-chat-id
 当前 `configure` 还会额外做这些事：
 
 - 保持 `mimo-voice-openclaw` 位于 `plugins.allow`
-- 自动把 `mimo_voice` 写入顶层 `tools.allow`
+- 自动把 `mimo_voice` 写入兼容的顶层 OpenClaw tools 白名单（如果已有 `tools.alsoAllow`，会优先写那里）
 
 ---
 

@@ -66,9 +66,14 @@ Planned source-skeleton environment variables (recognized as skeleton only, not 
 
 Current alpha code reads these values from process env or `~/.openclaw/.env`.
 
+When installed through the OpenClaw CLI with `systemd --user`, the generated unit reads both:
+- `~/.openclaw/.env`
+- `service/.env` (optional service-local overrides such as proxy settings)
+
 Current precedence behavior:
 - prefer values from `~/.openclaw/.env`
-- fall back to inherited process env only when the file does not define that variable
+- allow `service/.env` as a service-local override entry point for installer-managed systemd runs
+- fall back to inherited process env only when the file path in use does not define that variable
 - reject placeholder secret values like `your_telegram_bot_token` and `your_mimo_api_key`
 
 This is the current provider config entry point before a fuller normalized config file is introduced.
@@ -110,7 +115,9 @@ bash scripts/stop-bg.sh
 
 Installer-managed runtime note:
 - the current installer tries to install a `systemd --user` service for MiMo
+- before enabling the unit, the installer attempts to stop stale local listeners already occupying port `8091`
 - if `systemctl --user` is unavailable, it falls back to `start-bg.sh`
+- if Telegram or provider requests need a proxy under systemd, add `HTTP_PROXY` / `HTTPS_PROXY` / `ALL_PROXY` to `service/.env` or `~/.openclaw/.env`
 
 Runtime behavior notes:
 - `start-bg.sh` removes a stale pid file automatically before starting
@@ -133,10 +140,17 @@ curl -X POST http://127.0.0.1:8091/tts/raw \
   -H 'Content-Type: application/json' \
   -d '{
     "text": "Hello from MiMo Voice.",
-    "voice": "default_zh"
+    "voice": "default_zh",
+    "dialect": "粤语",
+    "style": "开心"
   }' \
   --output /tmp/mimo.wav
 ```
+
+Notes:
+- `/tts` and `/tts/raw` now accept `style`, `emotion`, `dialect`, and `no_style_tag`
+- if the text already starts with an inline performance prefix such as `（小声）...`, the service will avoid auto-prepending another `<style>...</style>` tag
+- a small conservative Cantonese rewrite is applied only for short `粤语/广东话` requests; it is intentionally limited and does not attempt full translation
 
 ### Send Telegram voice
 

@@ -95,8 +95,10 @@ mimo-voice-openclaw install
 
 Current alpha notes for this step:
 - `install` tries to install a `systemd --user` MiMo service when available
+- before enabling the service, the installer attempts to stop stale local listeners already occupying port `8091`
 - if user systemd is unavailable, it falls back to the background script path
-- install/configure also add `mimo_voice` to top-level `tools.allow`
+- install/configure also add `mimo_voice` to the compatible top-level tools allowlist (prefers `tools.alsoAllow` when present)
+- the generated unit can read both `~/.openclaw/.env` and optional service-local `.env` overrides
 
 ### Step 4: write plugin config
 
@@ -318,6 +320,35 @@ If the OpenClaw integration is not behaving as expected, verify these in order:
 5. provider credentials are configured correctly
 6. Telegram credentials are configured correctly
 7. gateway restart has been performed if commands do not show up yet
+
+### Focused regression checks for issue #1
+
+```bash
+# 1) installer / config sanity
+mimo-voice-openclaw doctor
+mimo-voice-openclaw install
+openclaw mimo-voice status
+
+# 2) text-processing unit tests
+cd service
+python3 -m unittest tests.test_text_processing
+
+# 3) /tts path with style + dialect
+curl -X POST http://127.0.0.1:8091/tts \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "text": "你好，我是小音。",
+    "voice": "default_zh",
+    "dialect": "粤语",
+    "style": "开心"
+  }'
+
+# 4) Telegram auto-voice examples
+# explicit prefix
+#   语音：你好，我是小音。
+# natural-language trigger
+#   请用粤语语音回复我一句：你好，我是小音。
+```
 
 ---
 
